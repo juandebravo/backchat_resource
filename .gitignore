@@ -27,11 +27,12 @@ pkg
 #
 # For MacOS:
 #
-#.DS_Store
+.autotest
+.DS_Store
 #
 # For TextMate
-#*.tmproj
-#tmtags
+*.tmproj
+tmtags
 #
 # For emacs:
 #*~

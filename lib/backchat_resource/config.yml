@@ -1,0 +1,31 @@
+defaults: &defaults
+  api:
+    host: "http://localhost:8080/1/"
+    extension: json
+    message_channel_path: "channels/"
+    message_stream_path: "streams/"
+    message_sources_path: "sources/"
+    message_source_path: "source/"
+    user_path: "user/"
+    login_path: "login/"
+    change_password_path: "change_password/"
+    forgotten_password_path: "forgot/"
+    plans_path: "plans/"
+    invite_code_path: "invite_code/"
+    api_key_path: "api_key/"
+    expand_uri_path: "expand_uri/"
+  
+development:
+  <<: *defaults
+  
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+  api:
+    host: "https://api.backchat.io/1/"
+production:
+  <<: *staging
+  api:
+    host: "https://api.backchat.io/1/"
