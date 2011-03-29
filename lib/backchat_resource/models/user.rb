@@ -41,7 +41,7 @@ module BackchatResource
       # Ask the API to generate a 32 char random API key for the current user
       # @return [String] 32 char API key
       def generate_random_api_key!
-        data = RestModel.put(BackchatResource::CONFIG['api']['api_key_path'])
+        data = put(BackchatResource::CONFIG['api']['api_key_path'])
         api_key = data["api_key"]
         BackchatResource::Base.api_key = api_key
         api_key
@@ -64,7 +64,7 @@ module BackchatResource
       # Send a password reminder to the user
       # @params {String} login
       def self.send_password_reminder(login)
-        data, @errors = post(BackchatResource::CONFIG['api']['forgotten_password_path'], { :login => login })
+        data = post(BackchatResource::CONFIG['api']['forgotten_password_path'], { :login => login })
       end
          
     end

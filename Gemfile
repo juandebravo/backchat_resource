@@ -14,4 +14,5 @@ end
 group :test do
 	gem "autotest"
 	gem "autotest-fsevent"
+	gem "fakeweb"
 end
