@@ -10,6 +10,7 @@ GEM
       activemodel (= 3.0.5)
       activesupport (= 3.0.5)
     activesupport (3.0.5)
+    addressable (2.2.4)
     autotest (4.4.6)
       ZenTest (>= 4.4.1)
     autotest-fsevent (0.2.5)
@@ -34,12 +35,14 @@ GEM
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.3.0)
     sys-uname (0.8.5)
+    unidecode (1.0.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   activeresource (>= 3.0.4)
+  addressable
   autotest
   autotest-fsevent
   bundler (~> 1.0.0)
@@ -47,3 +50,4 @@ DEPENDENCIES
   jeweler (~> 1.5.2)
   rcov
   rspec (~> 2.3.0)
+  unidecode

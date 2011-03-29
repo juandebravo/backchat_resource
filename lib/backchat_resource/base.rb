@@ -39,11 +39,11 @@ module BackchatResource
               resource = find_or_create_resource_for(key)
               resource.new(value)
             else
-              # ADDED - Call the attribute writer method
-              self.send("#{key}=", value)
-              # END ADD
               value.dup rescue value
           end
+      # ADDED - Call the attribute writer method
+      self.send("#{key}=", value) if self.respond_to?("#{key}=")
+      # END ADD
       end
       # Add any errors to the model
       if errors.any?
