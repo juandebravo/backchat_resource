@@ -6,6 +6,8 @@
 #
 # Example:
 #   BackchatResource::Models::Stream
+
+require 'rubygems'
 require 'yaml'
 
 # Load the configuration YML for use within the library classes

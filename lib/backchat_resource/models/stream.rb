@@ -12,6 +12,11 @@ module BackchatResource
         slug
       end
       
+      def name=(name)
+        @name = name
+        self.slug = name.to_slug
+      end
+      
     end
   end
 end

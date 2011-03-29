@@ -8,10 +8,12 @@ module BackchatResource
 
     cattr_accessor :api_key
 
+    # Keep track of BackChat.io API's raised server errors
     def server_errors
       @server_errors ||= ActiveModel::Errors.new(self)
     end
-        
+    
+    # https://github.com/rails/rails/blob/master/activeresource/lib/active_resource/base.rb#L1235
     # Load attributes into a class instance from a BackChat.io API JSON response document
     # which looks like { 'data': {}, 'errors': {} }
     def load(attributes)
@@ -37,6 +39,9 @@ module BackchatResource
               resource = find_or_create_resource_for(key)
               resource.new(value)
             else
+              # ADDED - Call the attribute writer method
+              self.send("#{key}=", value)
+              # END ADD
               value.dup rescue value
           end
       end
