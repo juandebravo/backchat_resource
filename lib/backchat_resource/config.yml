@@ -13,7 +13,7 @@ defaults: &defaults
     forgotten_password_path: "forgot"
     plans_path: "plans/"
     invite_code_path: "invite_code/"
-    api_key_path: "api_key/"
+    api_key_path: "api_key"
     expand_uri_path: "expand_uri/"
   
 development:
