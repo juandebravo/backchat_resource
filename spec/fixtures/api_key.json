@@ -1,0 +1,29 @@
+{
+    "data": {
+        "login": "adam",
+        "email": "adam@mojolly.com",
+        "_id": "4d639aeab4ac7e1d8700000b",
+        "channels": [{
+            "bare_uri": "{channel}://{host}",
+            "full_uri": "smtp://adam.mojolly-crew"
+        },
+        {
+            "bare_uri": "twitter://casualjim",
+            "full_uri": "twitter://casualjim#timeline"
+        },
+        {
+            "bare_uri": "smtp://adam.bieber-fever",
+            "full_uri": "smtp://adam.bieber-fever#smtp"
+        },
+        {
+            "bare_uri": "twitter://justinbeiber",
+            "full_uri": "twitter://justinbeiber#timeline"
+        }],
+        "api_key": "42755b5b182ee35b06c464197ef0d511",
+        "first_name": "Adam",
+        "last_name": "Burmister",
+        "streams": ["http://localhost:8080/1/streams/mojolly-crew"],
+        "plan": "http://localhost:8080/1/plans/free"
+    },
+    "errors": []
+}
