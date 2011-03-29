@@ -8,9 +8,21 @@ require 'backchat_resource'
 # in ./support/ and its subdirectories.
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
-# Don't allow any real requests to happen: useful for making sure everything is mocked out
-# FakeWeb.allow_net_connect = false
-
 RSpec.configure do |config|
   
+end
+
+# Load the contents of a fixture file
+# @param {String} file name without extension
+def load_web_api_fixture_file(name)
+  path = File.join(File.dirname(__FILE__), 'fixtures', "#{name}.json")
+  if File.exists?(path)
+    contents = ""
+    File.open(path).each do |line|
+      contents << line
+    end
+    return contents
+  else
+    return nil
+  end      
 end

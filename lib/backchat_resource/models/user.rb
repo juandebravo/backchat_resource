@@ -1,6 +1,12 @@
 module BackchatResource
   module Models
     class User < BackchatResource::Base      
+      
+      self.site = BackchatResource::CONFIG["api"]["host"].gsub(/\d+\/$/,'')
+      api_version = BackchatResource::CONFIG["api"]["host"].match(/\/(\d+)\/$/)[1]
+      self.element_name = api_version
+      self.collection_name = api_version
+      
       schema do
         string '_id',
                'email',
@@ -56,9 +62,10 @@ module BackchatResource
           :username => username,
           :password => password
         }
-        data = post(BackchatResource::CONFIG['api']['login_path'], auth_params)
-        RestModel.api_key = data["api_key"]
-        new(data)
+        response = post(BackchatResource::CONFIG['api']['login_path'], auth_params)
+        params = JSON.parse(response.body)
+        BackchatResource::Base.api_key = params["api_key"]
+        new(params)
       end
       
       # Send a password reminder to the user

@@ -1,6 +1,6 @@
 require 'active_resource'
 
-module BackchatResource        
+module BackchatResource          
   class Base < ActiveResource::Base
     self.site   = BackchatResource::CONFIG["api"]["host"]
     self.format = BackchatResource::CONFIG["api"]["extension"].to_sym
@@ -74,7 +74,7 @@ module BackchatResource
     end
     
     class << self
-
+          
       # Return the BackChat.io Authorization header with the API key for the user in place
       def headers
         @headers ||= { "Authorization" => "Backchat #{@@api_key}" }
@@ -85,7 +85,7 @@ module BackchatResource
         prefix_options, query_options = split_options(prefix_options) if query_options.nil?
         "#{prefix(prefix_options)}#{collection_name}/index.#{format.extension}#{query_string(query_options)}"
       end
-
+      
       # # https://github.com/rails/rails/blob/master/activeresource/lib/active_resource/base.rb#L637
       # def element_path(id, prefix_options = {}, query_options = nil)
       #   check_prefix_options(prefix_options)

@@ -4,15 +4,26 @@ describe "BackchatResource::Models::User" do
   
   include BackchatResource::Models
   
+  before(:each) do   
+    FakeWeb.allow_net_connect = false
+  end
+  
+  after(:each) do
+    FakeWeb.allow_net_connect = true 
+    FakeWeb.clean_registry
+  end
+  
   it "authenticates a valid user and returns a User instance" do
     FakeWeb.register_uri(:post, 
-                         %r[^http://localhost:8080/1/login/.*], 
-                         :body => "Nothing to be found 'round here",
+                         %r[^http://localhost:8080/1/login.json], 
+                         :body => load_web_api_fixture_file("login"),
                          :status => ["200", "OK"])
-                                                        
-    u = User.authenticate("adam","postage")
+                         
+    u = User.authenticate("brenda","gr33n")
     u.should_not be_nil
-    u.class.should_be User
+    u.class.should == User
+    u.full_name.should == "Brenda Green"
+    u.api_key.should == "BRENDA_API_KEY"
   end
   
   it "generates a random api_key for a logged in user" do
