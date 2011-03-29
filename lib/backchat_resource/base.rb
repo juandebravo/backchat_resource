@@ -85,6 +85,14 @@ module BackchatResource
         prefix_options, query_options = split_options(prefix_options) if query_options.nil?
         "#{prefix(prefix_options)}#{collection_name}/index.#{format.extension}#{query_string(query_options)}"
       end
+
+      # # https://github.com/rails/rails/blob/master/activeresource/lib/active_resource/base.rb#L637
+      # def element_path(id, prefix_options = {}, query_options = nil)
+      #   check_prefix_options(prefix_options)
+      # 
+      #   prefix_options, query_options = split_options(prefix_options) if query_options.nil?
+      #   "#{prefix(prefix_options)}#{collection_name}/#{URI.parser.escape id.to_s}.#{format.extension}#{query_string(query_options)}"
+      # end
       
       # Instantiate a collection document from BackChat.io API
       # This document should contain a "data" array element with attributes for each record
