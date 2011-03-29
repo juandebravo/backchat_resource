@@ -1,3 +1,6 @@
+# My test file for console debugging
+env.rb
+
 .rspec
 .document
 *.gemspec

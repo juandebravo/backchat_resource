@@ -1,5 +1,6 @@
 String.class_eval do
 
+  # @return {String} Convert from any string into a slug-safe (URL safe) key
   def to_slug
     ret = self.downcase.strip
     #blow away apostrophes

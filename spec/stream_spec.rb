@@ -35,4 +35,34 @@ describe "BackchatResource::Models::Stream" do
     s.id.should == s.slug
   end
   
+  it "has channel_filters, which are empty by default" do
+    s = BackchatResource::Models::Stream.new
+    s.channel_filters.should == []
+  end
+  
+  it "has channel_filters, which are populated by ChannelFilter models when creating a stream from a JSON response document" do
+    hash_from_json_response_doc = {
+      :data => {
+        :name => "Example doc with channel filters",
+        :channel_filters => [
+          {
+            :uri => "smtp://adam.mojolly-crew",
+            :canonical_uri => "smtp://adam.mojolly-crew",
+            :enabled => true
+          },
+          {
+            :uri => "twitter://casualjim?bql=text has \"mojolly\" or text has \"backchat \"#timeline\"",
+            :canonical_uri => "twitter://casualjim#timeline",
+            :enabled => true
+          }
+        ]
+      },
+      :errors => {}
+    }
+    s = BackchatResource::Models::Stream.new(hash_from_json_response_doc)
+    s.channel_filters.length.should == 2
+    s.channel_filters[0].class.should == BackchatResource::Models::ChannelFilter
+    s.channel_filters[0].canonical_uri.should == "smtp://adam.mojolly-crew"
+  end
+  
 end

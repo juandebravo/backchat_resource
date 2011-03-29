@@ -1,5 +1,6 @@
 defaults: &defaults
   api:
+    debug: true
     host: "http://localhost:8080/1/"
     extension: json
     message_channel_path: "channels/"
