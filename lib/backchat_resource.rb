@@ -9,6 +9,7 @@
 
 require 'rubygems'
 require 'yaml'
+require "addressable/uri"
 
 # Load the configuration YML for use within the library classes
 module BackchatResource

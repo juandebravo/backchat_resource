@@ -1,6 +1,8 @@
 source "http://rubygems.org"
 
 gem "activeresource", ">= 3.0.4"
+gem "addressable"
+gem "unidecode"
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.

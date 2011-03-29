@@ -53,10 +53,17 @@ module BackchatResource
       
       # Set the streams attribute to an array of Stream models from the input URLs
       # @param {Array[string]} URLs to stream descriptions
-      def streams=(array_of_url)
-        puts "&"*100
-        puts array_of_url.inspect
-        @streams = array_of_url
+      def streams=(urls)
+        urls = [urls] if !urls.is_a?(Array)
+        strms = []
+        urls.each do |stream_url|
+          # Extract the plan name form the URL:
+          # http://localhost:8080/1/stream/slug1 => slug1
+          uri = Addressable::URI.parse(stream_url)
+          slug = uri.path.split("/").last
+          strms << Stream.find(slug)          
+        end
+        @streams = strms
       end
       
       # Ensure it's an array
@@ -69,7 +76,8 @@ module BackchatResource
       def plan=(plan_url)
         # Extract the plan name form the URL:
         # http://localhost:8080/1/plans/free => free
-        plan_name = plan_url.match(%r[/plans/(.*)$])[1]
+        uri = Addressable::URI.parse(plan_url)
+        plan_name = uri.path.split("/").last
         @plan = Plan.find(plan_name)
       end
       

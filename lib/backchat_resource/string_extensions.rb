@@ -1,8 +1,10 @@
+# String extensions
 String.class_eval do
 
-  # @return {String} Convert from any string into a slug-safe (URL safe) key
   def to_slug
+    # ret = self.transliterate.downcase.strip
     ret = self.downcase.strip
+    
     #blow away apostrophes
     ret.gsub!(/['`]/,"")
 
@@ -21,5 +23,10 @@ String.class_eval do
     
     ret
   end
+
+  # def transliterate
+  #   # Unidecode gem is missing some hyphen transliterations
+  #   self.gsub(/[-‐‒–—―⁃−­]/u, '-').to_ascii
+  # end
 
 end
