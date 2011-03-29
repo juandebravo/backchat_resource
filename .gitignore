@@ -1,5 +1,6 @@
 .rspec
 .document
+*.gemspec
 
 # rcov generated
 coverage

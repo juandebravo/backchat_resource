@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'bundler'
+require 'lib/backchat_resource/version'
 begin
   Bundler.setup(:default, :development)
 rescue Bundler::BundlerError => e
@@ -14,15 +15,17 @@ Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "backchat_resource"
   gem.homepage = "http://github.com/adamburmister/backchat_resource"
-  gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  #gem.license = "MIT"
+  gem.summary = %Q{An ActiveRecord wrapper around the BackChat.io RESTful API}
+  gem.description = %Q{An ActiveRecord wrapper around the BackChat.io RESTful API}
   gem.email = "adam.burmister@gmail.com"
   gem.authors = ["Adam Burmister"]
+  gem.version = BackchatResource::VERSION  
   # Include your dependencies below. Runtime dependencies are required when using your gem,
   # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
   #  gem.add_runtime_dependency 'jabber4r', '> 0.1'
   #  gem.add_development_dependency 'rspec', '> 1.2.3'
+  gem.add_runtime_dependency 'active_resource', '> 3.0.4'
 end
 Jeweler::RubygemsDotOrgTasks.new
 
