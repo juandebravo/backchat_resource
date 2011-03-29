@@ -1,0 +1,27 @@
+{
+	"data":{
+	"login":"brenda",
+	"email":"brenda@mojolly.com",
+		"_id":"4d639aeab4ac7e1d8700000b",
+		"channels":[
+			{
+				"bare_uri":"twitter://brenda",
+				"full_uri":"twitter://brenda#timeline"
+			},
+			{
+				"bare_uri":"smtp://brenda.bieber-fever",
+				"full_uri":"smtp://brenda.bieber-fever#smtp"
+			},
+			{
+				"bare_uri":"twitter://justinbeiber",
+				"full_uri":"twitter://justinbeiber#timeline"
+			}
+		],
+		"api_key":"BRENDA_API_KEY",
+		"first_name":"Brenda",
+		"last_name":"Green",
+		"streams":["http://localhost:8080/1/streams/mojolly-crew"],
+		"plan":"http://localhost:8080/1/plans/free"
+	},
+	"errors":[]
+}
