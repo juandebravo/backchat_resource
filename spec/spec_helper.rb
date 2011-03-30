@@ -11,7 +11,7 @@ include BackchatResource::Models
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 RSpec.configure do |config|
-  
+  # config goes here  
 end
 
 # Load the contents of a fixture file

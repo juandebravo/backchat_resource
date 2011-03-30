@@ -2,29 +2,33 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 require "fakeweb_routes"
 
 describe BackchatResource::Models::User.to_s do
+
+  TEST_USER = "brenda"
+  TEST_PASS = "gr33n"
+  
+  before(:each) do
+    @user = User.authenticate(TEST_USER,TEST_PASS)
+  end
   
   it "authenticates a valid user and returns a User instance" do                         
-    u = User.authenticate("brenda","gr33n")
-    u.should_not be_nil
-    u.class.should == User
-    u.full_name.should == "Brenda Green"
-    u.api_key.should == "BRENDA_API_KEY"
+    @user.should_not be_nil
+    @user.class.should == User
+    @user.full_name.should == "Brenda Green"
+    @user.api_key.should == "BRENDA_API_KEY"
   end
   
   it "generates a random api_key for a logged in user" do
-    u = User.authenticate("brenda","gr33n")
-    old_api_key = u.api_key
-    u.generate_random_api_key!
-    u.api_key.should_not == old_api_key
+    old_api_key = @user.api_key
+    @user.generate_random_api_key!
+    @user.api_key.should_not == old_api_key
   end
   
   it "sends password reminders for non-logged in users" do
-    pending
+    User.send_password_reminder(TEST_USER)
   end
   
   it "has a full name" do
-    u = User.new(:first_name => "Brenda", :last_name => "Green")
-    u.full_name.should == "Brenda Green"
+    @user.full_name.should == "Brenda Green"
   end
   
   it "validates the login name" do
@@ -34,7 +38,7 @@ describe BackchatResource::Models::User.to_s do
   end
   
   it "humanice the login attribute" do
-    u = User.new(:login => '!@# invalid login $%^', :first_name => "Brenda", :last_name => "Green")
+    u = User.new(:login => '!@# invalid login $%^', :first_name => TEST_USER, :last_name => "Green")
     u.valid?
     u.errors.full_messages.should include "Login name can only contain letters, digits and underscores"
   end
@@ -48,18 +52,21 @@ describe BackchatResource::Models::User.to_s do
   end
   
   it "should have a plan" do
-    u = User.authenticate("brenda","gr33n")
-    u.plan.should be_an_instance_of Plan
+    @user.plan.should be_an_instance_of Plan
   end
   
   it "should have a streams array" do
-    u = User.authenticate("brenda","gr33n")
-    u.streams.should be_an_instance_of Array
+    @user.streams.should be_an_instance_of Array
+    if @user.streams.any?
+      @user.streams.first.should be_an_instance_of Stream
+    end
   end
   
   it "should have a channels array" do
-    u = User.authenticate("brenda","gr33n")
-    u.channels.should be_an_instance_of Array
+    @user.channels.should be_an_instance_of Array
+    if @user.channels.any?
+      @user.channels.first.should be_an_instance_of Channel
+    end
   end
   
   it "can save changes" do

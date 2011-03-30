@@ -18,7 +18,13 @@ module BackchatResource
                'short_display_name'
       end
       
-      # belongs_to :source
+      belongs_to :source
+      
+      # @return {Kind} a Kind that matches the URL structure given as input
+      def self.find_by_uri(uri)
+        uri = Addressable::URI.parse(uri)
+        nil # TODO
+      end
       
     end
   end
