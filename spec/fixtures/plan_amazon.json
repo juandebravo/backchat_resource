@@ -1,0 +1,14 @@
+{
+    "data": {
+        "name": "amazon",
+        "_id": "4d62efbfb4ac7e6b66000005",
+        "streams_limit": 250,
+        "channels_limit": 500,
+        "traffic_limit": 150,
+        "messages_limit": 1250000,
+        "price": 2000,
+        "sort_order": 4,
+        "traffic_unit": "GB"
+    },
+    "errors": []
+}

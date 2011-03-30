@@ -19,4 +19,9 @@ describe "BackchatResource::Models::Plan" do
     free.id.should == free.name
   end
   
+  it "has a uri" do
+    free = Plan.find("free")
+    free.api_document_uri.should == "http://localhost:8080/1/plans/free.json"
+  end
+  
 end

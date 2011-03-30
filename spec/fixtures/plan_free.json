@@ -1,0 +1,14 @@
+{
+    "data": {
+        "name": "free",
+        "_id": "4d62efbfb4ac7e6b66000001",
+        "streams_limit": 1,
+        "channels_limit": 10,
+        "traffic_limit": 200,
+        "messages_limit": 1000,
+        "price": 0,
+        "sort_order": 0,
+        "traffic_unit": "MB"
+    },
+    "errors": []
+}

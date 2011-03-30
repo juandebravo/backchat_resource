@@ -1,16 +1,9 @@
 module BackchatResource
   module Models
-    class User < BackchatResource::Base      
-      # Flag as a singleton resource (see ReactiveResource) so we don't pluralise
-      # URL paths (user -> users)
-      singleton
+    class User < BackchatResource::Base
       
-      self.site = BackchatResource::CONFIG["api"]["host"].gsub(/\/(\d+)\/$/,'')
-      api_version = BackchatResource::CONFIG["api"]["host"].match(/\/(\d+)\/$/)[1]
-      # self.element_name = api_version
-      self.collection_name = api_version
-      self.element_name = ''
-      # self.collection_name = ''
+      # Flag as a singleton resource (see ReactiveResource) so we don't pluralise URL paths (user -> users)
+      singleton
       
       schema do
         string '_id',
@@ -32,20 +25,23 @@ module BackchatResource
       end
       
       has_many :streams
-      # has_many :channels
+      has_many :channels
       has_one :plan
       
       validates_presence_of :login
       validates_format_of :login, :with => /^\w+$/, :message => "can only contain letters, digits and underscores"
-      validates_exclusion_of :login, :in => %w{ admin backchatio backchat mojolly support techsupport password passwordreset reset }, :message => "is not allowed for security reasons. Please try another."
+      validates_exclusion_of :login, :in => %w{ admin webmaster administrator postmaster team backchatio backchat mojolly support techsupport password passwordreset reset }, :message => "is not allowed for security reasons. Please try another."
       validates_presence_of :first_name, :last_name
       
-      # Humanize the target attribute
       HUMANIZED_ATTRIBUTES = {
         :login => "Login name",
       }
       def self.human_attribute_name(params, options={})
         HUMANIZED_ATTRIBUTES[params.to_sym] || super(params, options)
+      end
+
+      def id
+        _id
       end
       
       # Helper to return the fullname of this user
@@ -84,18 +80,35 @@ module BackchatResource
         end
       end
       
+      def plan
+        @plan_obj
+      end
+      
       # Set the plan attribute to a Plan model by a URL to the plan on the API
-      # @param {String} plan_url
-      def plan=(plan_url)
-        # Extract the plan name form the URL: http://localhost:8080/1/plans/free => free
-        plan_name = Addressable::URI.parse(plan_url).path.split("/").last
-        @plan = Plan.find(plan_name)
+      # @param {String|Plan} params
+      def plan=(params)
+        if params.is_a?(String)
+          # Extract the plan name form the URL: http://localhost:8080/1/plans/free => free
+          plan_name = Addressable::URI.parse(params).path.split("/").last
+          begin
+            @plan_obj = Plan.find(plan_name)
+          rescue
+            # Invalid plan - leave as is
+            raise ActiveResource::ResourceInvalid.new("Plan URL was not a valid Plan document")
+          end
+        elsif params.is_a?(Plan)
+          @plan_obj = params
+        else
+          raise ActiveResource::ResourceInvalid.new("Not a valid Plan")
+        end
+        @plan = @plan_obj.api_document_uri
       end
       
       # Ask the API to generate a 32 char random API key for the current user
       # @return [String] 32 char API key
       def generate_random_api_key!
-        response = put(BackchatResource::CONFIG['api']['api_key_path'])
+        payload = {}
+        response = connection.put("#{self.class.site}#{BackchatResource::CONFIG['api']['api_key_path']}.#{self.class.format.extension}", payload.to_query, self.class.headers)
         params = JSON.parse(response.body)
         api_key = params["api_key"]
         BackchatResource::Base.api_key = api_key
@@ -107,19 +120,15 @@ module BackchatResource
       # @param {String} password
       # @return {User|nil} The User model belonging to the passed in credentials or nil if none was found
       def self.authenticate(username, password)
-        auth_params = {
+        payload = {
           :username => username,
           :password => password
         }
-        
-        response = post(BackchatResource::CONFIG['api']['login_path'], auth_params)
-        # login_uri = Addressable::URI.parse(self.site).join("1/#{BackchatResource::CONFIG['api']['login_path']}.json")
-        # response = connection.post(login_uri.to_s, auth_params, headers)
-        
-        params = JSON.parse(response.body)
-        if params["data"]["api_key"]
-          BackchatResource::Base.api_key = params["data"]["api_key"]
-          new(params)
+        response = connection.post("#{self.site}#{BackchatResource::CONFIG['api']['login_path']}.#{self.format.extension}", payload.to_query)
+        body = JSON.parse(response.body)
+        if body["data"]["api_key"]
+          BackchatResource::Base.api_key = body["data"]["api_key"]
+          new(body)
         else
           nil
         end
@@ -128,21 +137,17 @@ module BackchatResource
       # Send a password reminder to the user
       # @params {String} login
       def self.send_password_reminder(login)
-        post(BackchatResource::CONFIG['api']['forgotten_password_path'], { :login => login })
+        payload = { :login => login }
+        response = connection.post("#{self.site}#{BackchatResource::CONFIG['api']['forgotten_password_path']}.#{self.format.extension}", payload.to_query)
+        body = JSON.parse(response.body)
+        # TODO: What does a fail/success raise that we can return?
       end
       
       private
       
-      # https://github.com/rails/rails/blob/3-0-4-security/activeresource/lib/active_resource/custom_methods.rb#L110
-      # Customise the URLs to use for requesting stuff associated with the user.
-      # User object calls are at the API root, 'https://api.backchat.io/1/'
-      def custom_method_element_url(method_name, options = {})
-        "#{self.class.prefix(prefix_options)}#{self.class.collection_name}/#{method_name}.#{self.class.format.extension}#{self.class.__send__(:query_string, options)}"
+      def self.element_path(id, prefix_options = {}, query_options = nil)
+        "#{self.site}#{BackchatResource::CONFIG['api']['user_path']}index.#{self.format.extension}"
       end
-      
-      # def custom_method_new_element_url(method_name, options = {})
-      #   "#{self.class.prefix(prefix_options)}#{self.class.collection_name}/#{method_name}/new.#{self.class.format.extension}#{self.class.__send__(:query_string, options)}"
-      # end
       
     end
   end

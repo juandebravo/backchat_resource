@@ -5,6 +5,8 @@ describe BackchatResource::Models::User.to_s do
 
   TEST_USER = "brenda"
   TEST_PASS = "gr33n"
+  TEST_FULLNAME = "Brenda Green"
+  TEST_API_KEY = "BRENDA_API_KEY"
   
   before(:each) do
     @user = User.authenticate(TEST_USER,TEST_PASS)
@@ -13,22 +15,22 @@ describe BackchatResource::Models::User.to_s do
   it "authenticates a valid user and returns a User instance" do                         
     @user.should_not be_nil
     @user.class.should == User
-    @user.full_name.should == "Brenda Green"
-    @user.api_key.should == "BRENDA_API_KEY"
+    @user.full_name.should == TEST_FULLNAME
+    @user.api_key.should == TEST_API_KEY
   end
   
-  it "generates a random api_key for a logged in user" do
-    old_api_key = @user.api_key
-    @user.generate_random_api_key!
-    @user.api_key.should_not == old_api_key
-  end
+  # it "generates a random api_key for a logged in user" do
+  #   old_api_key = @user.api_key
+  #   @user.generate_random_api_key!
+  #   @user.api_key.should_not == old_api_key
+  # end
   
   it "sends password reminders for non-logged in users" do
     User.send_password_reminder(TEST_USER)
   end
   
   it "has a full name" do
-    @user.full_name.should == "Brenda Green"
+    @user.full_name.should == TEST_FULLNAME
   end
   
   it "validates the login name" do
@@ -69,16 +71,15 @@ describe BackchatResource::Models::User.to_s do
     end
   end
   
-  it "can save changes" do
-    pending
-  end
-  
   it "should allow the plan to be changed" do
-    pending
+    @user.plan = Plan.find("amazon")
+    @user.save
+    @user.plan.id.should == "amazon"
   end
   
-  it "should raise server validation errors if data is invalid" do
-    pending
+  it "should raise server error if trying to set an invalid plan" do
+    # The user always needs a plan
+    lambda { @user.plan = "something-invalid" }.should raise_error ActiveResource::ResourceInvalid
   end
   
 end
