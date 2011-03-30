@@ -17,6 +17,9 @@ module BackchatResource
                'resource_display_name',
                'short_display_name'
       end
+      
+      # belongs_to :source
+      
     end
   end
 end

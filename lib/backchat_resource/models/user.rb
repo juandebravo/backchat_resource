@@ -1,11 +1,16 @@
 module BackchatResource
   module Models
     class User < BackchatResource::Base      
+      # Flag as a singleton resource (see ReactiveResource) so we don't pluralise
+      # URL paths (user -> users)
+      singleton
       
       self.site = BackchatResource::CONFIG["api"]["host"].gsub(/\/(\d+)\/$/,'')
       api_version = BackchatResource::CONFIG["api"]["host"].match(/\/(\d+)\/$/)[1]
-      self.element_name = api_version
+      # self.element_name = api_version
       self.collection_name = api_version
+      self.element_name = ''
+      # self.collection_name = ''
       
       schema do
         string '_id',
@@ -24,9 +29,11 @@ module BackchatResource
         string 'plan',
                'streams',
                'channels'
-      end   
+      end
       
-      attr_accessor :plan, :streams, :channels
+      has_many :streams
+      # has_many :channels
+      has_one :plan
       
       validates_presence_of :login
       validates_format_of :login, :with => /^\w+$/, :message => "can only contain letters, digits and underscores"
@@ -54,21 +61,29 @@ module BackchatResource
       # Set the streams attribute to an array of Stream models from the input URLs
       # @param {Array[string]} URLs to stream descriptions
       def streams=(urls)
+        @streams ||= []
         urls = [urls] if !urls.is_a?(Array)
-        strms = []
         urls.each do |stream_url|
           # Extract the plan name form the URL:
           # http://localhost:8080/1/stream/slug1 => slug1
           uri = Addressable::URI.parse(stream_url)
           slug = uri.path.split("/").last
-          strms << Stream.find(slug)          
+          @streams << Stream.find(slug)          
         end
-        @streams = strms
       end
       
       # Ensure it's an array
       def channels
         @channels || []
+      end
+
+      # Set the channel attribute to an array of Channel models from the input URLs
+      # @param {Array[Hash]} URLs of channels
+      def channels=(params)
+        @channels ||= []
+        params.each do |hash|
+          @channels << Channel.build_from_api_response(hash)
+        end
       end
       
       # Set the plan attribute to a Plan model by a URL to the plan on the API
@@ -91,7 +106,7 @@ module BackchatResource
         api_key
       end
       
-      # Authenticate a user
+      # Authenticate a user and set the API key on BackchatResource::Base to the authenticated user
       # @param {String} username
       # @param {String} password
       # @return {User|nil} The User model belonging to the passed in credentials or nil if none was found
@@ -100,11 +115,18 @@ module BackchatResource
           :username => username,
           :password => password
         }
+        
         response = post(BackchatResource::CONFIG['api']['login_path'], auth_params)
+        # login_uri = Addressable::URI.parse(self.site).join("1/#{BackchatResource::CONFIG['api']['login_path']}.json")
+        # response = connection.post(login_uri.to_s, auth_params, headers)
+        
         params = JSON.parse(response.body)
-        puts params.inspect
-        BackchatResource::Base.api_key = params["data"]["api_key"]
-        new(params)
+        if params["data"]["api_key"]
+          BackchatResource::Base.api_key = params["data"]["api_key"]
+          new(params)
+        else
+          nil
+        end
       end
       
       # Send a password reminder to the user
@@ -122,9 +144,9 @@ module BackchatResource
         "#{self.class.prefix(prefix_options)}#{self.class.collection_name}/#{method_name}.#{self.class.format.extension}#{self.class.__send__(:query_string, options)}"
       end
       
-      def custom_method_new_element_url(method_name, options = {})
-        "#{self.class.prefix(prefix_options)}#{self.class.collection_name}/#{method_name}/new.#{self.class.format.extension}#{self.class.__send__(:query_string, options)}"
-      end
+      # def custom_method_new_element_url(method_name, options = {})
+      #   "#{self.class.prefix(prefix_options)}#{self.class.collection_name}/#{method_name}/new.#{self.class.format.extension}#{self.class.__send__(:query_string, options)}"
+      # end
       
     end
   end

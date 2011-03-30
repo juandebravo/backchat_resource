@@ -1,13 +1,14 @@
-require 'active_resource'
+require 'addressable/uri'
 
-module BackchatResource          
-  class Base < ActiveResource::Base
+module BackchatResource                
+  class Base < ReactiveResource::Base
+
     self.site   = BackchatResource::CONFIG["api"]["host"]
     self.format = BackchatResource::CONFIG["api"]["extension"].to_sym
     self.include_root_in_json = false
 
     cattr_accessor :api_key
-
+    
     # Keep track of BackChat.io API's raised server errors
     def server_errors
       @server_errors ||= ActiveModel::Errors.new(self)
@@ -41,9 +42,9 @@ module BackchatResource
             else
               value.dup rescue value
           end
-      # ADDED - Call the attribute writer method
-      self.send("#{key}=", value) if self.respond_to?("#{key}=")
-      # END ADD
+        # ADDED - Call the attribute writer method
+        self.send("#{key}=", value) if self.respond_to?("#{key}=")
+        # END ADD
       end
       # Add any errors to the model
       if errors.any?
@@ -74,7 +75,7 @@ module BackchatResource
     end
     
     class << self
-          
+        
       # Return the BackChat.io Authorization header with the API key for the user in place
       def headers
         @headers ||= { "Authorization" => "Backchat #{@@api_key}" }

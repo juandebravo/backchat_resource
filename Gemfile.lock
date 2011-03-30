@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/justinweiss/reactive_resource.git
+  revision: 738b10bf370cbd2e9a6fb3d80c54b62b60d7a3f8
+  specs:
+    reactive_resource (0.5.1)
+      activeresource (>= 2.3.10)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -49,5 +56,6 @@ DEPENDENCIES
   fakeweb
   jeweler (~> 1.5.2)
   rcov
+  reactive_resource!
   rspec (~> 2.3.0)
   unidecode

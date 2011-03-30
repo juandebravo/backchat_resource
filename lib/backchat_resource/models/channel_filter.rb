@@ -6,6 +6,9 @@ module BackchatResource
                'canonical_uri', 
                'enabled'
       end
+      
+      belongs_to :stream
+      
     end
   end
 end

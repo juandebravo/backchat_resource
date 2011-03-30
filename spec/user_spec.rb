@@ -1,9 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 require "fakeweb_routes"
 
-describe "BackchatResource::Models::User" do
-  
-  include BackchatResource::Models
+describe BackchatResource::Models::User.to_s do
   
   it "authenticates a valid user and returns a User instance" do                         
     u = User.authenticate("brenda","gr33n")
@@ -62,6 +60,18 @@ describe "BackchatResource::Models::User" do
   it "should have a channels array" do
     u = User.authenticate("brenda","gr33n")
     u.channels.should be_an_instance_of Array
+  end
+  
+  it "can save changes" do
+    pending
+  end
+  
+  it "should allow the plan to be changed" do
+    pending
+  end
+  
+  it "should raise server validation errors if data is invalid" do
+    pending
   end
   
 end

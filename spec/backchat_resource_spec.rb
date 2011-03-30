@@ -17,6 +17,11 @@ describe "BackchatResource::Base" do
     BackchatResource::Base.api_key.should == TEST_API_KEY
   end
   
+  it "should have an api_key attr we can set through the setup method" do
+    BackchatResource.setup(TEST_API_KEY) 
+    BackchatResource::Base.api_key.should == TEST_API_KEY
+  end
+  
   it "should have an api_key attr which is inherited by subclasses" do
     key = "MY_TEST_KEY"
     BackchatResource::Base.api_key = TEST_API_KEY

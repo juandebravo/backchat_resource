@@ -1,8 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "Stream" do
-
-  include BackchatResource::Models
   
   it "generates a collection URL that is supported by BackChat.io's API" do
     s = Stream.new
@@ -65,6 +63,18 @@ describe "Stream" do
     s.channel_filters.length.should == 2
     s.channel_filters[0].class.should == BackchatResource::Models::ChannelFilter
     s.channel_filters[0].canonical_uri.should == "smtp://adam.mojolly-crew"
+  end
+  
+  it "does client server side validation on _id, slug, name" do
+    invalid_hash = {
+      :data => {},
+      :errors => {}
+    }
+    s = Stream.new(invalid_hash)
+    s.save.should == false
+    s.errors[:_id].any?.should == true
+    s.errors[:slug].any?.should == true
+    s.errors[:name].any?.should == true
   end
   
 end

@@ -17,6 +17,9 @@ module BackchatResource
                'parse_templates',
                'updated_at'
       end
+      
+      has_many :kinds
+      
     end
   end
 end
