@@ -20,6 +20,8 @@ module BackchatResource
       end
       
       # Build a new instance of Channel from a URL
+      # @param 
+      # @return Channel
       def self.build_from_api_response(doc)
         uri = nil
         if doc.is_a?(Channel)

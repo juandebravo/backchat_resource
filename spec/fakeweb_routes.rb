@@ -28,12 +28,12 @@ FakeWeb.register_uri(:post, %r[^http://localhost:8080/1/forgot.json],
 FakeWeb.register_uri(:get, "http://localhost:8080/1/plans/index.json", 
                     :body => load_web_api_fixture_file("plans"),
                     :status => ["200", "OK"])
-FakeWeb.register_uri(:get, "http://localhost:8080/1/plans/free.json", 
+FakeWeb.register_uri(:get, %r[http://localhost:8080/1/plans/free], 
                     :body => load_web_api_fixture_file("plan_free"),
                     :status => ["200", "OK"])
-FakeWeb.register_uri(:get, "http://localhost:8080/1/plans/amazon.json", 
+FakeWeb.register_uri(:get, %r[http://localhost:8080/1/plans/amazon], 
                     :body => load_web_api_fixture_file("plan_amazon"),
                     :status => ["200", "OK"])
-FakeWeb.register_uri(:get, "http://localhost:8080/1/streams/mojolly-crew.json", 
+FakeWeb.register_uri(:get, %r[http://localhost:8080/1/streams/mojolly-crew], 
                     :body => load_web_api_fixture_file("stream_mojolly-crew"),
                     :status => ["200", "OK"])
