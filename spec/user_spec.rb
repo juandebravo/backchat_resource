@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe BackchatResource::Models::User.to_s do
+describe "User" do
 
   TEST_USER = "brenda"
   TEST_PASS = "gr33n"

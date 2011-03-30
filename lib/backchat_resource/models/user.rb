@@ -44,7 +44,7 @@ module BackchatResource
       end
 
       def id
-        _id
+        login
       end
       
       # Helper to return the fullname of this user
@@ -144,15 +144,18 @@ module BackchatResource
       end
 
       #
-      # On user.save we need to save the Streams objects to a different end point
+      # On user.save we need to 
+      # - save the Streams objects to a different end point
+      # - upgrade the Plan if it's changed
       # 
-      # def create
-      #   
-      # end
-      # 
-      # def update
-      #   
-      # end
+      def create
+        # TODO
+        super
+      end
+      def update
+        # TODO
+        super
+      end
       
       private
       
