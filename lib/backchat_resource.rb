@@ -8,8 +8,9 @@
 #   BackchatResource::Models::Stream
 
 require 'rubygems'
+require 'logger'
 require 'yaml'
-require "addressable/uri"
+require 'reactive_resource'
 
 # Load the configuration YML for use within the library classes
 module BackchatResource
@@ -17,11 +18,21 @@ module BackchatResource
   $:.unshift Root
   
   # Configuration properties for BackchatResource
-  CONFIG = YAML.load_file("#{BackchatResource::Root}/backchat_resource/config.yml")[(Rails.env rescue "development")] if !defined?(CONFIG)
+  CONFIG = YAML.load_file("#{BackchatResource::Root}/backchat_resource/config.yml")[(Rails.env rescue "defaults")] if !defined?(CONFIG)
+  
+  class << self
+    attr_accessor :logger
+  end
+  
+  # Sets up the credentials the ActiveResources will use to access the
+  # BackChat.io API. Optionally takes a +logger+, which defaults to +STDOUT+.
+  def self.setup(api_key, logger = nil)
+    @logger = logger || Logger.new(STDOUT) 
+    BackchatResource::Base.api_key = api_key
+  end
 end
 
 Dir["#{BackchatResource::Root}/backchat_resource/*.rb"].each {|file| require file }
-Dir["#{BackchatResource::Root}/backchat_resource/models/*.rb"].each {|file| require file }
 
 # Enable debugging output if configured
 if BackchatResource::CONFIG["api"]["debug"]

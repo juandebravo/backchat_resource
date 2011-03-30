@@ -1,7 +1,7 @@
 module BackchatResource
   module Models
     # Pricing plan for BackChat.io
-    class Plan < BackchatResource::Base      
+    class Plan < BackchatResource::Base
       schema do
         string 'name',
                'streams_limit', 
@@ -13,6 +13,14 @@ module BackchatResource
                'sort_order',
                'traffic_unit'
       end
+      
+      belongs_to :user
+      
+      # @return {string} Plan name as ID
+      def id
+        name
+      end
+      
     end
   end
 end

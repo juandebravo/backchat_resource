@@ -3,8 +3,6 @@ require "fakeweb_routes"
 
 describe "BackchatResource::Models::Plan" do
   
-  include BackchatResource::Models
-  
   it "should find a list of all plans" do
     all = Plan.all
     all.length.should == 5
@@ -14,6 +12,11 @@ describe "BackchatResource::Models::Plan" do
     free = Plan.find("free")
     free.name.should == "free"
     free.price.should == 0
+  end
+  
+  it "should return the plan name as id" do
+    free = Plan.find("free")
+    free.id.should == free.name
   end
   
 end
