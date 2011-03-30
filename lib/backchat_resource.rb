@@ -12,8 +12,8 @@ require 'logger'
 require 'yaml'
 require 'reactive_resource'
 
-require 'backchat_resource/backchat_json_format'
-require 'backchat_resource/exceptions'
+# require 'backchat_resource/backchat_json_format'
+# require 'backchat_resource/exceptions'
 
 # Load the configuration YML for use within the library classes
 module BackchatResource

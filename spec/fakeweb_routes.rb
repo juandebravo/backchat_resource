@@ -1,3 +1,18 @@
+# Load the contents of a fixture file
+# @param {String} file name without extension
+def load_web_api_fixture_file(name)
+  path = File.join(File.dirname(__FILE__), 'fixtures', "#{name}.json")
+  if File.exists?(path)
+    contents = ""
+    File.open(path).each do |line|
+      contents << line
+    end
+    return contents
+  else
+    return nil
+  end      
+end
+
 # Register mocked URLs that return static JSON file responses to web requests.
 # We can then test the API in isolation.
 # WARNING: Ensure the fixture files are kept up to date
