@@ -19,6 +19,12 @@ module BackchatResource
       end
       
       has_many :kinds
+
+      # @return {Source} a Source that matches the URL structure given as input
+      def self.find_by_uri(uri)
+        uri = Addressable::URI.parse(uri)
+        nil # TODO
+      end
       
     end
   end

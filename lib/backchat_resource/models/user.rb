@@ -64,10 +64,8 @@ module BackchatResource
         @streams ||= []
         urls = [urls] if !urls.is_a?(Array)
         urls.each do |stream_url|
-          # Extract the plan name form the URL:
-          # http://localhost:8080/1/stream/slug1 => slug1
-          uri = Addressable::URI.parse(stream_url)
-          slug = uri.path.split("/").last
+          # Extract the plan name form the URL: http://localhost:8080/1/stream/slug1 => slug1
+          slug = Addressable::URI.parse(stream_url).path.split("/").last
           @streams << Stream.find(slug)          
         end
       end
@@ -89,10 +87,8 @@ module BackchatResource
       # Set the plan attribute to a Plan model by a URL to the plan on the API
       # @param {String} plan_url
       def plan=(plan_url)
-        # Extract the plan name form the URL:
-        # http://localhost:8080/1/plans/free => free
-        uri = Addressable::URI.parse(plan_url)
-        plan_name = uri.path.split("/").last
+        # Extract the plan name form the URL: http://localhost:8080/1/plans/free => free
+        plan_name = Addressable::URI.parse(plan_url).path.split("/").last
         @plan = Plan.find(plan_name)
       end
       
@@ -132,7 +128,7 @@ module BackchatResource
       # Send a password reminder to the user
       # @params {String} login
       def self.send_password_reminder(login)
-        data = post(BackchatResource::CONFIG['api']['forgotten_password_path'], { :login => login })
+        post(BackchatResource::CONFIG['api']['forgotten_password_path'], { :login => login })
       end
       
       private

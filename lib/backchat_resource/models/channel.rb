@@ -14,27 +14,29 @@ module BackchatResource
       
       # @return {Source}
       def source
-        nil #TODO
+        @source ||= Source.find_by_uri(uri)
       end
       
       # The message source-kind refines information of the source by defining a child-item
       # of the source... for instance, Twitter is the source, but Timeline is the kind
       # @return {Kind}
-      def source_kind
-        nil #TODO
+      def kind
+        @kind ||= Kind.find_by_uri(uri)
       end
       
       # Build a new instance of Channel from a URL
       def self.build_from_api_response(doc)
+        uri = nil
         if doc.is_a?(String)
-          # A URL
+          uri = doc
         elsif doc.is_a?(Hash)
           # A hash of URLs
           #{\"bare_uri\":\"{channel}://{host}\",\"full_uri\":\"smtp://adam.mojolly-crew\"}
+          uri = doc["full_uri"]
         else
           raise "Expected an input of a String or Hash, got #{doc.class}"
         end
-        true
+        channel = new(:uri => uri)
       end
       
     end
