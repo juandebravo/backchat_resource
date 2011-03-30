@@ -7,11 +7,6 @@ module BackchatResource
       
       validates_presence_of :_id, :uri
       
-      # Populate the channel bassed on the URI, building up source and kind properties
-      def uri=(uri)
-        @uri = uri #TODO
-      end
-      
       # @return {Source}
       def source
         @source ||= Source.find_by_uri(uri)

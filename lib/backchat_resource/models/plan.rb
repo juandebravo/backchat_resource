@@ -18,7 +18,12 @@ module BackchatResource
       
       # @return {string} Plan name as ID
       def id
-        name
+        name.downcase
+      end
+      
+      # Returns the URI of this Plan on the Backend API
+      def api_document_uri
+        "#{self.class.site}#{BackchatResource::CONFIG['api']['plans_path']}#{id}.#{self.class.format.extension}"
       end
       
     end

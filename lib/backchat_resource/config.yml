@@ -2,12 +2,11 @@ defaults: &defaults
   api:
     debug: true
     host: "http://localhost:8080/1/"
-    extension: json
     message_channel_path: "channels/"
     message_stream_path: "streams/"
     message_sources_path: "sources/"
     message_source_path: "source/"
-    user_path: "user/"
+    user_path: ""
     login_path: "login"
     change_password_path: "change_password"
     forgotten_password_path: "forgot"

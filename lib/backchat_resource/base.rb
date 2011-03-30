@@ -2,12 +2,16 @@ require 'addressable/uri'
 
 module BackchatResource                
   class Base < ReactiveResource::Base
-
+    
     self.site   = BackchatResource::CONFIG["api"]["host"]
-    self.format = BackchatResource::CONFIG["api"]["extension"].to_sym
+    self.format = :backchat_json
     self.include_root_in_json = false
 
     cattr_accessor :api_key
+    
+    def encode(options={})
+      self.class.format.encode(attributes, options)
+    end
     
     # Keep track of BackChat.io API's raised server errors
     def server_errors
