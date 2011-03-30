@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'bundler'
-require 'lib/backchat_resource/version'
+require './lib/backchat_resource/version'
 begin
   Bundler.setup(:default, :development)
 rescue Bundler::BundlerError => e
