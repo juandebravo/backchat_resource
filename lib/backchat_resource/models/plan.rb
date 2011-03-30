@@ -26,6 +26,15 @@ module BackchatResource
         "#{self.class.site}#{BackchatResource::CONFIG['api']['plans_path']}#{id}.#{self.class.format.extension}"
       end
       
+      def self.find_by_uri(uri)
+        response = connection.get(uri)
+        new(response)
+      end
+      
+      def to_json
+        uri
+      end
+      
     end
   end
 end

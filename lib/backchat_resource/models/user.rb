@@ -28,6 +28,9 @@ module BackchatResource
       has_many :channels
       has_one :plan
       
+      # A Plan model instance (User's plan attr is a URL, which we use to pick out the right Plan to use)
+      attr_accessor :plan_obj
+      
       validates_presence_of :login
       validates_format_of :login, :with => /^\w+$/, :message => "can only contain letters, digits and underscores"
       validates_exclusion_of :login, :in => %w{ admin webmaster administrator postmaster team backchatio backchat mojolly support techsupport password passwordreset reset }, :message => "is not allowed for security reasons. Please try another."
@@ -84,24 +87,21 @@ module BackchatResource
         @plan_obj
       end
       
-      # Set the plan attribute to a Plan model by a URL to the plan on the API
-      # @param {String|Plan} params
-      def plan=(params)
-        if params.is_a?(String)
-          # Extract the plan name form the URL: http://localhost:8080/1/plans/free => free
-          plan_name = Addressable::URI.parse(params).path.split("/").last
+      # Set the plan for this user
+      # @param {string|Plan} params URL of a plan or a Plan object itself
+      def plan=(param)
+        if param.is_a?(String)
           begin
-            @plan_obj = Plan.find(plan_name)
+            @plan_obj = Plan.find_by_uri(param)
           rescue
-            # Invalid plan - leave as is
-            raise ActiveResource::ResourceInvalid.new("Plan URL was not a valid Plan document")
+            raise ActiveResource::ResourceInvalid.new("Plan URL is invalid")
           end
-        elsif params.is_a?(Plan)
-          @plan_obj = params
+        elsif param.is_a?(Plan)
+          @plan_obj = param
         else
           raise ActiveResource::ResourceInvalid.new("Not a valid Plan")
         end
-        @plan = @plan_obj.api_document_uri
+        @attributes[:plan] = @plan_obj.api_document_uri
       end
       
       # Ask the API to generate a 32 char random API key for the current user
@@ -109,8 +109,8 @@ module BackchatResource
       def generate_random_api_key!
         payload = {}
         response = connection.put("#{self.class.site}#{BackchatResource::CONFIG['api']['api_key_path']}.#{self.class.format.extension}", payload.to_query, self.class.headers)
-        params = JSON.parse(response.body)
-        api_key = params["api_key"]
+        body = JSON.parse(response.body)
+        api_key = body["api_key"]
         BackchatResource::Base.api_key = api_key
         api_key
       end
@@ -142,6 +142,17 @@ module BackchatResource
         body = JSON.parse(response.body)
         # TODO: What does a fail/success raise that we can return?
       end
+
+      #
+      # On user.save we need to save the Streams objects to a different end point
+      # 
+      # def create
+      #   
+      # end
+      # 
+      # def update
+      #   
+      # end
       
       private
       

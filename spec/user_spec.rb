@@ -1,5 +1,4 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
-require "fakeweb_routes"
 
 describe BackchatResource::Models::User.to_s do
 
@@ -79,7 +78,11 @@ describe BackchatResource::Models::User.to_s do
   
   it "should raise server error if trying to set an invalid plan" do
     # The user always needs a plan
-    lambda { @user.plan = "something-invalid" }.should raise_error ActiveResource::ResourceInvalid
+    lambda { @user.plan = "http://localhost:8080/1/plans/invalid.json" }.should raise_error ActiveResource::ResourceInvalid
+  end
+  
+  it "should save changes to stream objects on user save" do
+    pending "Streams are saved to a different URL than user, so on save also post/put /1/streams/"
   end
   
 end

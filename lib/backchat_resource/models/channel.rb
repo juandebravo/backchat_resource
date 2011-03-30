@@ -22,7 +22,9 @@ module BackchatResource
       # Build a new instance of Channel from a URL
       def self.build_from_api_response(doc)
         uri = nil
-        if doc.is_a?(String)
+        if doc.is_a?(Channel)
+          return doc
+        elsif doc.is_a?(String)
           uri = doc
         elsif doc.is_a?(Hash)
           # A hash of URLs
@@ -31,7 +33,7 @@ module BackchatResource
         else
           raise "Expected an input of a String or Hash, got #{doc.class}"
         end
-        channel = new(:uri => uri)
+        new(:uri => uri)
       end
       
     end
