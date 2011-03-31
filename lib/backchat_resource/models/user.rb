@@ -4,7 +4,9 @@ module BackchatResource
       
       # Flag as a singleton resource (see ReactiveResource) so we don't pluralise URL paths (user -> users)
       singleton
-      
+
+      attr_accessor :login, :password, :first_name, :last_name, :email
+            
       schema do
         string '_id',
                'email',
@@ -26,10 +28,7 @@ module BackchatResource
       
       has_many :streams
       has_many :channels
-      has_one :plan
-      
-      # A Plan model instance (User's plan attr is a URL, which we use to pick out the right Plan to use)
-      attr_accessor :plan_obj
+      has_one "plan"
       
       validates_presence_of :login
       validates_format_of :login, :with => /^\w+$/, :message => "can only contain letters, digits and underscores"
@@ -44,7 +43,7 @@ module BackchatResource
       end
 
       def id
-        login
+        @attributes["login"] || nil
       end
       
       # Helper to return the fullname of this user
@@ -83,25 +82,21 @@ module BackchatResource
         end
       end
       
+      # Get the Plan for the current user.
+      # Instead of returning the plan URI attribute return a populated model instance
+      # @return Plan
       def plan
-        @plan_obj
+        Plan.find_by_uri(attributes["plan"])
       end
       
       # Set the plan for this user
       # @param {string|Plan} params URL of a plan or a Plan object itself
       def plan=(param)
         if param.is_a?(String)
-          begin
-            @plan_obj = Plan.find_by_uri(param)
-          rescue
-            raise ActiveResource::ResourceInvalid.new("Plan URL is invalid")
-          end
+          attributes["plan"] = param
         elsif param.is_a?(Plan)
-          @plan_obj = param
-        else
-          raise ActiveResource::ResourceInvalid.new("Not a valid Plan")
+          attributes["plan"] = param.api_document_uri
         end
-        @attributes[:plan] = @plan_obj.api_document_uri
       end
       
       # Ask the API to generate a 32 char random API key for the current user
@@ -130,7 +125,7 @@ module BackchatResource
           BackchatResource::Base.api_key = body["data"]["api_key"]
           new(body)
         else
-          nil
+          nil # warden expects a failure to return nil
         end
       end
       
@@ -159,6 +154,8 @@ module BackchatResource
       
       private
       
+      # Override the element path to match the BackChat.io API structure - the root is the user element
+      # https://api.backchat.io/{API_VERS}/
       def self.element_path(id, prefix_options = {}, query_options = nil)
         "#{self.site}#{BackchatResource::CONFIG['api']['user_path']}index.#{self.format.extension}"
       end
