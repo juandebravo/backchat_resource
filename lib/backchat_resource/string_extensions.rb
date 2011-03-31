@@ -1,8 +1,6 @@
-# String extensions
+# Extend the string to have a to_slug method which creates a URL friendly version of a string
 String.class_eval do
-
   def to_slug
-    # ret = self.transliterate.downcase.strip
     ret = self.downcase.strip
     
     #blow away apostrophes
@@ -23,10 +21,4 @@ String.class_eval do
     
     ret
   end
-
-  # def transliterate
-  #   # Unidecode gem is missing some hyphen transliterations
-  #   self.gsub(/[-‐‒–—―⁃−­]/u, '-').to_ascii
-  # end
-
 end

@@ -1,8 +1,9 @@
 source "http://rubygems.org"
 
-gem "activeresource", ">= 3.0.4"
+gem "activeresource"#, ">= 3.0.4"
 gem "addressable"
 gem "unidecode"
+gem "addressable"
 gem "reactive_resource", :git => "git://github.com/justinweiss/reactive_resource.git"
 
 # Add dependencies to develop your gem here.
@@ -12,10 +13,8 @@ group :development do
   gem "bundler", "~> 1.0.0"
   gem "jeweler", "~> 1.5.2"
   gem "rcov", ">= 0"
-end
-
-group :test do
 	gem "autotest"
 	gem "autotest-fsevent"
 	gem "fakeweb"
+	gem "fuubar"
 end

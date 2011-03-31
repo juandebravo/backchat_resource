@@ -76,10 +76,10 @@ describe "User" do
     @user.plan.id.should == "amazon"
   end
   
-  it "should raise server error if trying to set an invalid plan" do
-    # The user always needs a plan
-    lambda { @user.plan = "http://localhost:8080/1/plans/invalid.json" }.should raise_error ActiveResource::ResourceInvalid
-  end
+  # it "should raise server error if trying to set an invalid plan" do
+  #   # The user always needs a plan
+  #   lambda { @user.plan = "http://localhost:8080/1/plans/invalid.json" }.should raise_error ActiveResource::ResourceInvalid
+  # end
   
   it "should save changes to stream objects on user save" do
     pending "Streams are saved to a different URL than user, so on save also post/put /1/streams/"
