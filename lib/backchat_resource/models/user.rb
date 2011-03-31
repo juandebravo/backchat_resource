@@ -4,7 +4,7 @@ module BackchatResource
       
       # Flag as a singleton resource (see ReactiveResource) so we don't pluralise URL paths (user -> users)
       singleton
-
+      
       attr_accessor :login, :password, :first_name, :last_name, :email
             
       schema do
@@ -95,7 +95,7 @@ module BackchatResource
         if param.is_a?(String)
           attributes["plan"] = param
         elsif param.is_a?(Plan)
-          attributes["plan"] = param.api_document_uri
+          attributes["plan"] = param.api_url
         end
       end
       

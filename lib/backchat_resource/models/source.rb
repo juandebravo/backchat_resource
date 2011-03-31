@@ -1,8 +1,11 @@
+# Read only:
+# A Source model describes the origin source of a message: such as twitter, email, RSS, XMPP, etc
 module BackchatResource
   module Models
-    # Read only:
-    # A Source model describes the origin source of a message: such as twitter, email, RSS, XMPP, etc
     class Source < BackchatResource::Base
+      # self.element_name    = "sources"
+      # self.collection_name = "sources"
+      
       schema do
         string '_id', 
                'category', 
@@ -19,12 +22,6 @@ module BackchatResource
       end
       
       has_many :kinds
-
-      # @return {Source} a Source that matches the URL structure given as input
-      def self.find_by_uri(uri)
-        uri = Addressable::URI.parse(uri)
-        nil # TODO
-      end
       
     end
   end

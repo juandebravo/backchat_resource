@@ -79,7 +79,7 @@ module BackchatResource
     end
     
     class << self
-        
+              
       # Return the BackChat.io Authorization header with the API key for the user in place
       def headers
         @headers ||= { "Authorization" => "Backchat #{@@api_key}" }
