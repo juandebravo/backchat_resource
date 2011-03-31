@@ -37,3 +37,6 @@ FakeWeb.register_uri(:get, %r[http://localhost:8080/1/plans/amazon],
 FakeWeb.register_uri(:get, %r[http://localhost:8080/1/streams/mojolly-crew], 
                     :body => load_web_api_fixture_file("stream_mojolly-crew"),
                     :status => ["200", "OK"])
+FakeWeb.register_uri(:get, %r[http://localhost:8080/1/sources/index.json], 
+                    :body => load_web_api_fixture_file("sources"),
+                    :status => ["200", "OK"])

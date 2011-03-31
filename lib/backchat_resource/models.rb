@@ -6,7 +6,7 @@ module BackchatResource
     autoload :Channel, 'backchat_resource/models/channel'
     autoload :ChannelFilter, 'backchat_resource/models/channel_filter'
     autoload :Source, 'backchat_resource/models/source'
-    autoload :Kind, 'backchat_resource/models/kind'
+    autoload :Kind, 'backchat_resource/models/source'
     autoload :Plan, 'backchat_resource/models/plan'
   end
 end

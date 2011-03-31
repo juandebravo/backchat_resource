@@ -1,7 +1,6 @@
 module BackchatResource
   module Models
-    class User < BackchatResource::Base
-      
+    class User < BackchatResource::Base      
       # Flag as a singleton resource (see ReactiveResource) so we don't pluralise URL paths (user -> users)
       singleton
       

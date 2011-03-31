@@ -1,10 +1,8 @@
+# Read Only:
+# Pricing plan for BackChat.io
 module BackchatResource
   module Models
-    # Pricing plan for BackChat.io
     class Plan < BackchatResource::Base
-      # self.element_name    = "plans"
-      # self.collection_name = "plans"
-      
       schema do
         string 'name',
                'streams_limit', 
