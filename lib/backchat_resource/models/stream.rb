@@ -2,7 +2,10 @@ require 'backchat_resource/models/user'
 
 module BackchatResource
   module Models
-    class Stream < BackchatResource::Base      
+    class Stream < BackchatResource::Base
+      # self.element_name    = "streams"
+      # self.collection_name = "streams"
+      
       schema do
         string '_id',
                'slug',
@@ -20,7 +23,7 @@ module BackchatResource
       # Return an empty array
       def channel_filters
         @attributes["channel_filters"] || []
-      end
+      end 
       
       # Set from an array of items
       def channel_filters=(params)
@@ -39,8 +42,14 @@ module BackchatResource
 
       # Set the name of the stream and generate a new slug based on it
       def name=(name)
-        @name = name
+        @attributes["name"] = name
         self.slug = name.to_slug
+      end
+      
+      # The API URL for the stream
+      def api_url
+        return nil if slug.blank?
+        "#{self.class.site}#{BackchatResource::CONFIG['api']['message_stream_path']}#{slug}.#{self.class.format.extension}"
       end
       
     end

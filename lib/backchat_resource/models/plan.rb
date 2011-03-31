@@ -2,6 +2,9 @@ module BackchatResource
   module Models
     # Pricing plan for BackChat.io
     class Plan < BackchatResource::Base
+      # self.element_name    = "plans"
+      # self.collection_name = "plans"
+      
       schema do
         string 'name',
                'streams_limit', 
@@ -22,7 +25,7 @@ module BackchatResource
       end
       
       # Returns the URI of this Plan on the Backend API
-      def api_document_uri
+      def api_url
         "#{self.class.site}#{BackchatResource::CONFIG['api']['plans_path']}#{id}.#{self.class.format.extension}"
       end
       

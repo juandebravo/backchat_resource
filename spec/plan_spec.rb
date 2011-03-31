@@ -20,7 +20,7 @@ describe "BackchatResource::Models::Plan" do
   
   it "has a uri" do
     free = Plan.find("free")
-    free.api_document_uri.should == "http://localhost:8080/1/plans/free.json"
+    free.api_url.should == "http://localhost:8080/1/plans/free.json"
   end
   
 end

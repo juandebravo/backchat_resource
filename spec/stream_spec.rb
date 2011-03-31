@@ -77,4 +77,16 @@ describe "Stream" do
     s.errors[:name].any?.should == true
   end
   
+  it "has a URL if the slug is set" do
+    s = Stream.new
+    s.name = "Mojolly crew"
+    s.api_url.should == "http://localhost:8080/1/streams/mojolly-crew.json"
+  end
+  
+  it "doesn't have a URL if the slug isn't set" do
+    s = Stream.new
+    s.api_url.should == nil
+  end
+  
+  
 end
