@@ -27,7 +27,7 @@ module BackchatResource
         # TODO
       end
       
-      # @param {String} BQL query to filter against the Channel
+      # @param [string] BQL query to filter against the Channel
       def bql=(bql)
         @bql = bql
         @working_uri.query_values = (@working_uri.query_values||{}).merge({:bql => bql})

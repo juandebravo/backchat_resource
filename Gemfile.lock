@@ -49,6 +49,7 @@ GEM
     rspec-mocks (2.3.0)
     sys-uname (0.8.5)
     unidecode (1.0.0)
+    yard (0.6.4)
 
 PLATFORMS
   ruby
@@ -66,3 +67,4 @@ DEPENDENCIES
   reactive_resource!
   rspec (~> 2.3.0)
   unidecode
+  yard

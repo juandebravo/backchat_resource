@@ -27,9 +27,9 @@ describe "Source" do
     kind.to_json.should == "{\"_id\":\"TIMELINE\",\"auth_type\":\"NoAuth\",\"description\":\"Collect a timeline of all public tweets from any Twitter user.\",\"direction\":\"IN\",\"display_name\":\"Twitter Timeline\",\"protocol\":\"HTTPS\",\"short_display_name\":\"Twitter (Timeline)\"}"
   end
   
-  it "should serialize a source to JSON" do 
-    src = Source.find_for_uri(TEST_URI)
-    src.to_json.should == ""
-  end
+  # it "should serialize a source to JSON" do 
+  #   src = Source.find_for_uri(TEST_URI)
+  #   src.to_json.should == ""
+  # end
   
 end

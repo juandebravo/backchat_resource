@@ -17,17 +17,18 @@ module BackchatResource
       
       belongs_to :user
       
-      # @return {string} Plan name as ID
+      # @return [string] Plan name as ID
       def id
         name.downcase
       end
       
-      # Returns the URI of this Plan on the Backend API
+      # @return [string] the URI of this Plan on the Backend API
       def api_url
         "#{self.class.site}#{BackchatResource::CONFIG['api']['plans_path']}#{id}.#{self.class.format.extension}"
       end
       
-      def self.find_by_uri(uri)
+      # @return [Plan] get a Plan instance populated with the contents of an API Plan URL
+      def self.get_from_url(uri)
         response = connection.get(uri)
         new(response)
       end

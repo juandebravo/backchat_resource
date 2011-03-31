@@ -17,4 +17,5 @@ group :development do
 	gem "autotest-fsevent"
 	gem "fakeweb"
 	gem "fuubar"
+	gem "yard"
 end

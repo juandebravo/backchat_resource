@@ -1,7 +1,8 @@
 module BackchatResource
   module Models
     class User < BackchatResource::Base      
-      # Flag as a singleton resource (see ReactiveResource) so we don't pluralise URL paths (user -> users)
+      # @see ReactiveResource
+      # Flag as a singleton resource so we don't pluralise URL paths (user -> users)
       singleton
       
       attr_accessor :login, :password, :first_name, :last_name, :email
@@ -45,18 +46,19 @@ module BackchatResource
         @attributes["login"] || nil
       end
       
-      # Helper to return the fullname of this user
+      # @return the full name of this user
       def full_name
         "#{first_name} #{last_name}".strip
       end
       
+      # :nodoc:
       # Ensure it's an array
       def streams
         @streams || []
       end
       
       # Set the streams attribute to an array of Stream models from the input URLs
-      # @param {Array[string]} URLs to stream descriptions
+      # @param [Array<string>] URLs to stream descriptions
       def streams=(urls)
         @streams ||= []
         urls = [urls] if !urls.is_a?(Array)
@@ -67,17 +69,18 @@ module BackchatResource
         end
       end
       
+      # :nodoc:
       # Ensure it's an array
       def channels
         @channels || []
       end
 
-      # Set the channel attribute to an array of Channel models from the input URLs
-      # @param {Array[Hash]} URLs of channels
+      # Set the `channels` attribute to an array of Channel models from the input URLs
+      # @param [Array<Hash>] URLs of channels
       def channels=(params)
         @channels ||= []
         params.each do |hash|
-          @channels << Channel.build_from_api_response(hash)
+          @channels << Channel.build_from_uri(hash)
         end
       end
       
@@ -85,7 +88,7 @@ module BackchatResource
       # Instead of returning the plan URI attribute return a populated model instance
       # @return Plan
       def plan
-        Plan.find_by_uri(attributes["plan"])
+        Plan.get_from_url(attributes["plan"])
       end
       
       # Set the plan for this user
@@ -110,8 +113,8 @@ module BackchatResource
       end
       
       # Authenticate a user and set the API key on BackchatResource::Base to the authenticated user
-      # @param {String} username
-      # @param {String} password
+      # @param [string] username
+      # @param [string] password
       # @return {User|nil} The User model belonging to the passed in credentials or nil if none was found
       def self.authenticate(username, password)
         payload = {
@@ -129,7 +132,7 @@ module BackchatResource
       end
       
       # Send a password reminder to the user
-      # @params {String} login
+      # @param [string] login
       def self.send_password_reminder(login)
         payload = { :login => login }
         response = connection.post("#{self.site}#{BackchatResource::CONFIG['api']['forgotten_password_path']}.#{self.format.extension}", payload.to_query)
