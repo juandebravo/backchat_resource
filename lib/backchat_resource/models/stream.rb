@@ -30,9 +30,9 @@ module BackchatResource
         cfs = []
         params.each do |cf|
           if cf.is_a?(ChannelFilter)
-            cfs << ChannelFilter.new(cf)
-          else
             cfs << cf
+          else
+            cfs << ChannelFilter.new(cf)
           end
         end
         @channel_filters = cfs
@@ -48,7 +48,7 @@ module BackchatResource
       # @param [string] name of the stream
       # @note This also sets `slug` to a slug-safe version based on name
       def name=(name)
-        @attributes["name"] = name
+        super(name)
         self.slug = name.to_slug
       end
       

@@ -34,13 +34,6 @@ module BackchatResource
         self.uri= @working_uri # store back in the 'uri' attribute
       end
       
-      # Returns the channel being filtered by this filter instance, as defined
-      # in the ChannelFilter's 'uri' attribute
-      # @return {Channel} the channel being filtered by this instance
-      def channel
-        nil
-      end
-      
       # Build a new instance of a ChannelFilter based on the input BackChat.io URI, or Hash
       # @param {String|URI|Hash}
       # @return {ChannelFilter}

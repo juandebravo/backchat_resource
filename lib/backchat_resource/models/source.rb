@@ -78,7 +78,7 @@ module BackchatResource
       end
        
       def id
-        (@attributes["_id"] || "").downcase
+        _id.downcase
       end
 
       def _id
