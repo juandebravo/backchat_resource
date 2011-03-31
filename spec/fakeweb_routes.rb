@@ -1,5 +1,5 @@
 # Load the contents of a fixture file
-# @param {String} file name without extension
+# @param [string] file name without extension
 def load_web_api_fixture_file(name)
   path = File.join(File.dirname(__FILE__), 'fixtures', "#{name}.json")
   if File.exists?(path)

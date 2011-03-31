@@ -1,7 +1,7 @@
 module BackchatResource
   module Models
-    # Read only:
-    # A Source model describes the origin source of a message: such as twitter, email, RSS, XMPP, etc
+    # @note Read only
+    # A `Source` model describes the origin source of a message: such as twitter, email, RSS, XMPP, etc
     class Source < BackchatResource::Base
       schema do
         string '_id', 
@@ -25,7 +25,8 @@ module BackchatResource
         @kinds || []
       end
       
-      # Set the kinds available on this Source
+      # Set the `Kind`s available on this `Source`
+      # @param [Array<Kind>, Array<Hash>]
       def kinds=(arr)
         knds = []
         arr.each do |param|
@@ -38,12 +39,13 @@ module BackchatResource
         @kinds = knds
       end
       
+      # @return [Array<Source>]
       def self.all
         @@cached_sources ||= super
       end
       
-      # Find a Source that would match the passed URI
-      # @param {string|URI}
+      # Find a `Source` that would match the passed `URI`
+      # @param [string, URI]
       def self.find_for_uri(uri)
         uri = Addressable::URI.parse(uri) if uri.is_a?(String)
         return nil if uri.scheme.blank?
@@ -52,10 +54,10 @@ module BackchatResource
       
     end
     
-    # Read only:
-    # A Kind model provides a more detailed description of the origin source of a message. They are child
-    # objects of the Source model, and not actually belonging to an API endpoint.
-    # An example is a twitter timeline: Where "Twitter" would be the Source, and "timeline" would be the Kind
+    # @note Read only
+    # A `Kind` model provides a more detailed description of the origin source of a message. They are child
+    # objects of the `Source` model, and not actually belonging to an API endpoint.
+    # An example is a twitter timeline: Where "Twitter" would be the `Source`, and "timeline" would be the `Kind`
     class Kind
       extend ActiveModel::Naming
       include ActiveModel::Serializers::JSON
@@ -156,14 +158,16 @@ module BackchatResource
         @attributes["auth_type"] = value
       end
       
-      # @return {Kind} a Kind that matches the URL structure given as input
+      # @return [Kind,nil] a Kind that matches the URL structure given as input
       def self.find_for_uri(uri)
         uri = Addressable::URI.parse(uri) if uri.is_a?(String)
         src = Source.find_for_uri(uri)
         return nil if src.nil? || src.kinds.blank?
-        kind = src.kinds.select { |knd| knd.id == uri.fragment.downcase }.first
+        if uri.fragment
+          kind = src.kinds.select { |knd| knd.id == uri.fragment.downcase }.first
+        end
         if kind.nil?
-          kind = src.kinds.select { |knd| knd.id == src.default_kind }.first
+          kind = src.kinds.select { |knd| knd.id == src.default_kind.downcase }.first
         end
         return kind
       end
