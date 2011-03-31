@@ -40,6 +40,12 @@ describe "Stream" do
     s.channel_filters.should == []
   end
   
+  it "populates correctly from a find" do
+    s = Stream.find("mojolly-crew")
+    s.name.should == "mojolly crew"
+    s.description.should == "following the mojolly guys"
+  end
+  
   it "has channel_filters, which are populated by ChannelFilter models when creating a stream from a JSON response document" do
     hash_from_json_response_doc = {
       :data => {
@@ -61,7 +67,7 @@ describe "Stream" do
     }
     s = Stream.new(hash_from_json_response_doc)
     s.channel_filters.length.should == 2
-    s.channel_filters[0].class.should == BackchatResource::Models::ChannelFilter
+    s.channel_filters[0].should be_instance_of ChannelFilter
     s.channel_filters[0].canonical_uri.should == "smtp://adam.mojolly-crew"
   end
   

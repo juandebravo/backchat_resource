@@ -88,7 +88,7 @@ module BackchatResource
       # Instead of returning the plan URI attribute return a populated model instance
       # @return Plan
       def plan
-        Plan.get_from_url(attributes["plan"])
+        @plan ||= Plan.get_from_url(attributes["plan"])
       end
       
       # Set the plan for this user
@@ -99,6 +99,7 @@ module BackchatResource
         elsif param.is_a?(Plan)
           attributes["plan"] = param.api_url
         end
+        @plan = nil # clear cache
       end
       
       # Ask the API to generate a 32 char random API key for the current user
@@ -117,17 +118,21 @@ module BackchatResource
       # @param [string] password
       # @return {User|nil} The User model belonging to the passed in credentials or nil if none was found
       def self.authenticate(username, password)
-        payload = {
-          :username => username,
-          :password => password
-        }
-        response = connection.post("#{self.site}#{BackchatResource::CONFIG['api']['login_path']}.#{self.format.extension}", payload.to_query)
-        body = JSON.parse(response.body)
-        if body["data"]["api_key"]
-          BackchatResource::Base.api_key = body["data"]["api_key"]
-          new(body)
-        else
-          nil # warden expects a failure to return nil
+        begin
+          payload = {
+            :username => username,
+            :password => password
+          }
+          response = connection.post("#{self.site}#{BackchatResource::CONFIG['api']['login_path']}.#{self.format.extension}", payload.to_query)
+          body = JSON.parse(response.body)
+          if body["data"]["api_key"]
+            BackchatResource::Base.api_key = body["data"]["api_key"]
+            new(body)
+          else
+            nil # warden expects a failure to return nil
+          end
+        rescue ActiveResource::UnauthorizedAccess
+          nil
         end
       end
       

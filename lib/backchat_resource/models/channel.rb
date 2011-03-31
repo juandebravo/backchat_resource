@@ -18,7 +18,7 @@ module BackchatResource
       def kind
         @kind ||= Kind.find_for_uri(uri)
       end
-      
+            
       # Build a new instance of Channel from a URL
       # @param [Channel, string, Hash]
       # @return [Channel]
