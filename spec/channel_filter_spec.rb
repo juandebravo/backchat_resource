@@ -50,4 +50,8 @@ describe "ChannelFilter" do
     cf.uri.to_s.should == "twitter://backchatio?bql=text%20has%20%22something%22&other=true#timeline"
   end
   
+  it "should return the Channel model it's filtering" do
+    pending
+  end
+  
 end

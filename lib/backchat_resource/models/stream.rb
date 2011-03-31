@@ -3,9 +3,6 @@ require 'backchat_resource/models/user'
 module BackchatResource
   module Models
     class Stream < BackchatResource::Base
-      # self.element_name    = "streams"
-      # self.collection_name = "streams"
-      
       schema do
         string '_id',
                'slug',
