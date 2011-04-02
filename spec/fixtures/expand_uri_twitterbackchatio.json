@@ -1,0 +1,63 @@
+{
+    "data": {
+        "twitter://backchatio": {
+            "bare_uri": "twitter://backchatio", 
+            "bare_uri_template": "{source}://{target}", 
+            "canonical_uri": "twitter://backchatio#timeline", 
+            "canonical_uri_template": "{source}://{target}#{kind}", 
+            "kind": {
+                "_id": "TIMELINE", 
+                "auth_type": "NoAuth", 
+                "description": "Collect a timeline of all public tweets from any Twitter user.", 
+                "direction": "IN", 
+                "display_name": "Twitter Timeline", 
+                "protocol": "HTTPS", 
+                "short_display_name": "Twitter (Timeline)"
+            }, 
+            "params": {}, 
+            "resource_kind": "timeline", 
+            "resources": [], 
+            "source": {
+                "_id": "TWITTER", 
+                "category": "SOCIAL", 
+                "created_at": "Mon, 21 Feb 2011 23:05:35 UTC", 
+                "default_auth_kind": "OAUTH", 
+                "default_bare_uri_template": "{source}://{target}", 
+                "default_canonical_uri_template": "{source}://{target}#{kind}", 
+                "default_kind": "TIMELINE", 
+                "display_name": "Twitter", 
+                "enabled": true, 
+                "kinds": [
+                    {
+                        "_id": "OAUTH", 
+                        "auth_type": "OAuth", 
+                        "description": "Use OAuth to connect to Twitter, allowing you to collect Tweets and Direct Messages (DMs).", 
+                        "direction": "INOUT", 
+                        "display_name": "Twitter Account (OAuth)", 
+                        "oauth_omniauth_provider": "TWITTER", 
+                        "protocol": "HTTPS", 
+                        "short_display_name": "Twitter (Account)"
+                    }, 
+                    {
+                        "_id": "TIMELINE", 
+                        "auth_type": "NoAuth", 
+                        "description": "Collect a timeline of all public tweets from any Twitter user.", 
+                        "direction": "IN", 
+                        "display_name": "Twitter Timeline", 
+                        "protocol": "HTTPS", 
+                        "short_display_name": "Twitter (Timeline)"
+                    }
+                ], 
+                "parse_templates": [
+                    {
+                        "is_default": true, 
+                        "parse_template": "{source}://{user_info?}@{target}#{kind?}", 
+                        "scheme": "twitter"
+                    }
+                ], 
+                "updated_at": "Mon, 21 Feb 2011 23:05:35 UTC"
+            }
+        }
+    }, 
+    "errors": []
+}
