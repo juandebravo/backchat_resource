@@ -1,0 +1,10 @@
+#export RUBYOPT="rubygems"
+
+rvm_install_on_use_flag=1
+
+rvm ruby-1.9.2@backchat_resource
+
+if ! command -v bundle ; then
+  gem install bundler
+  bundle install
+fi
