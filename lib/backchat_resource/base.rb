@@ -15,7 +15,7 @@ module BackchatResource
     def server_errors
       @server_errors ||= ActiveModel::Errors.new(self)
     end
-    
+        
     # https://github.com/rails/rails/blob/master/activeresource/lib/active_resource/base.rb#L1235
     # Load attributes into a class instance from a BackChat.io API JSON response document
     # which looks like { 'data': {}, 'errors': {} }
@@ -77,7 +77,7 @@ module BackchatResource
     end
     
     class << self
-              
+      
       # Return the BackChat.io Authorization header with the API key for the user in place
       def headers
         @headers ||= { "Authorization" => "Backchat #{@@api_key}" }

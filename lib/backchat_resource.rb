@@ -18,8 +18,6 @@ module BackchatResource
   Root = File.dirname(__FILE__)
   $:.unshift Root
   
-  
-  
   class << self
     attr_accessor :logger
   end
@@ -39,6 +37,7 @@ require 'backchat_resource/string_extensions'
 require 'backchat_resource/backchat_json_format'
 require 'backchat_resource/exceptions'
 require 'backchat_resource/backchat_uri'
+require 'backchat_resource/connection'
 require 'backchat_resource/base'
 require 'backchat_resource/models'
 include BackchatResource
