@@ -1,4 +1,4 @@
-# FakeWeb.allow_net_connect = false
+FakeWeb.allow_net_connect = false
 
 # Load the contents of a fixture file
 # @param [string] file name without extension
