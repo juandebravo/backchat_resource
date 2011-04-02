@@ -32,6 +32,24 @@ describe "User" do
     @user.full_name.should == TEST_FULLNAME
   end
   
+  it "has all it's fields set from the JSON document" do
+    @user._id.should_not be_nil
+    @user.email.should_not be_nil
+    @user.login.should_not be_nil
+    @user.first_name.should_not be_nil
+    @user.last_name.should_not be_nil
+    @user.api_key.should_not be_nil
+    @user.plan.should_not be_nil
+    @user.streams.should_not be_nil
+    @user.channels.should_not be_nil
+  end
+  
+  it "can set properties on a new instance (one not loaded from a API JSON document)" do
+    u = User.new
+    # This is a non-`attr_accesor` field, only set via the `schema`
+    u.postcode = "test"
+  end
+  
   it "validates the login name" do
     u = User.new(:login => '!@# invalid login $%^')
     u.valid?.should == false
@@ -74,6 +92,32 @@ describe "User" do
     @user.plan = Plan.find("amazon")
     @user.save
     @user.plan.id.should == "amazon"
+  end
+  
+  it "should find a channel that matches a URI as input" do
+    ch = @user.channels.first
+    ch.should_not == nil
+    channels = @user.find_channels_for_uri(ch.uri)
+    channels.length.should be > 0
+    channels.first.should == ch
+  end
+  
+  it "should find a channel that matches a URI as input" do
+    @user.find_channels_for_uri("smtp://").should_not == nil
+  end
+  
+  it "should find streams using a channel" do
+    # puts @user.streams.inspect
+    ch = @user.find_channels_for_uri("email://")
+    ch.should_not be_nil
+    streams = @user.find_streams_using_channel(ch.first)
+    streams.should_not == []
+  end
+  
+  it "should return empty array when finding streams using a channel for the curerent_user and no such streams exist" do
+    ch = Channel.new(:uri => "twitter://madeup#timeline")
+    streams = @user.find_streams_using_channel(ch)
+    streams.should == []
   end
   
   it "should save changes to stream objects on user save" do

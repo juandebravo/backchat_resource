@@ -9,7 +9,7 @@ describe "BackchatResource::Base" do
   end
   
   it "should load the site base URI from the config file" do
-    BackchatResource::Base.site.to_s.should == "http://localhost:8080/1/"
+    BackchatResource::Base.site.to_s.should == BackchatResource::CONFIG["api"]["host"]
   end
 
   it "should have an api_key attr we can set" do

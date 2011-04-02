@@ -1,9 +1,7 @@
 source "http://rubygems.org"
 
 gem "activeresource"#, ">= 3.0.4"
-gem "addressable"
 gem "unidecode"
-gem "addressable"
 gem "reactive_resource", :git => "git://github.com/justinweiss/reactive_resource.git"
 
 # Add dependencies to develop your gem here.

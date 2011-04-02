@@ -1,5 +1,9 @@
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
+
+# Put the lib into fixture/test mode
+module BackchatResource; DebugEnv="test"; end
+
 require 'rspec'
 require 'fakeweb'
 require 'backchat_resource'

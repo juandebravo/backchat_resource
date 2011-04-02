@@ -1,5 +1,3 @@
-require 'addressable/uri'
-
 module BackchatResource                
   class Base < ReactiveResource::Base
     

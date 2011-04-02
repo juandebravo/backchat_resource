@@ -7,6 +7,13 @@ module BackchatResource
       
       validates_presence_of :_id, :uri
       
+      # TODO:
+      # Access properties on the URI as if they were on the Channel
+      # set scheme [Kind,string]
+      # set kind [Kind,string]
+      # source/target
+      # 
+      
       # @return [Source]
       def source
         @source ||= Source.find_for_uri(uri)
@@ -18,14 +25,30 @@ module BackchatResource
       def kind
         @kind ||= Kind.find_for_uri(uri)
       end
-            
+      
+      # @return [BackchatUri]
+      def uri
+        @uri ||= (begin
+          if @attributes["uri"].is_a?(String)
+            BackchatUri.parse(@attributes["uri"])
+          else
+            @attributes["uri"]
+          end
+        end)
+      end
+      
+      def uri=(uri)
+        @uri = nil # clear cache
+        super(uri)
+      end
+      
       # Build a new instance of Channel from a URL
-      # @param [Channel, string, Hash]
+      # @param [BackchatUri, string, Hash]
       # @return [Channel]
       def self.build_from_uri(doc)
         uri = nil
-        if doc.is_a?(Channel)
-          return doc
+        if doc.is_a?(BackchatUri)
+          uri = doc
         elsif doc.is_a?(String)
           uri = doc
         elsif doc.is_a?(Hash)

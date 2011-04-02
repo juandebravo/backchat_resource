@@ -45,9 +45,9 @@ module BackchatResource
       end
       
       # Find a `Source` that would match the passed `URI`
-      # @param [string, URI]
+      # @param [string, BackchatUri]
       def self.find_for_uri(uri)
-        uri = Addressable::URI.parse(uri) if uri.is_a?(String)
+        uri = BackchatUri.parse(uri) if uri.is_a?(String)
         return nil if uri.scheme.blank?
         self.all.select { |src| src.id == uri.scheme.downcase }.first
       end
@@ -78,7 +78,7 @@ module BackchatResource
       end
        
       def id
-        _id.downcase
+        @attributes["_id"].downcase
       end
 
       def _id
@@ -160,7 +160,7 @@ module BackchatResource
       
       # @return [Kind,nil] a Kind that matches the URL structure given as input
       def self.find_for_uri(uri)
-        uri = Addressable::URI.parse(uri) if uri.is_a?(String)
+        uri = BackchatUri.parse(uri) if uri.is_a?(String)
         src = Source.find_for_uri(uri)
         return nil if src.nil? || src.kinds.blank?
         if uri.fragment

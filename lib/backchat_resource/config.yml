@@ -29,4 +29,5 @@ staging:
 production:
   <<: *staging
   api:
+    debug: false
     host: "https://api.backchat.io/1/"
