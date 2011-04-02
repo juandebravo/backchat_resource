@@ -4,55 +4,26 @@
 module BackchatResource
   class BackchatUri
     
-    BACKCHAT_URI_REGEX = /^(([^:\/\?#]+):\/\/)?((.*):(.*)@)?([^?#\/:]*)(:(\d*))?(\/([^?#]*))?(\?([^#]*))?(#([^\/]*))?(\/(.*))?/
+    # BACKCHAT_URI_REGEX = /^(([^:\/\?#]+):\/\/)?((.*):(.*)@)?([^?#\/:]*)(:(\d*))?(\/([^?#]*))?(\?([^#]*))?(#([^\/]*))?(\/(.*))?/
     
-    DOWNCASED_ATTRIBUTES = %w{scheme kind}
+    # DOWNCASED_ATTRIBUTES = %w{scheme kind}
     
-    attr_accessor :parts, :uri
+    attr_accessor :uri
     
-    def initialize(params={}, options={})
-      # Hash containing all regex matched parts of the parsed URI
-      @parts = {
-        :scheme=>nil,
-        :user=>nil,
-        :password=>nil,
-        :source=>nil,
-        :port=>nil,
-        :resource=>nil,
-        :resources=>nil,
-        :querystring=>nil,
-        :query=>nil,
-        :kind=>nil,
-        :fragment_resource=>nil
-      }
+    @expanded = {}
+    
+    def initialize(param={})
       @uri = nil
     
-      if params.is_a?(String)
-        @uri = params
-        @parts = self.parse_into_parts(@uri)
-        DOWNCASED_ATTRIBUTES.each do |atr|
-          @parts[atr.to_sym].downcase! if @parts[atr.to_sym]
-        end
-      elsif params.is_a?(Hash)
-        compatible_param_keys = params.keys.reject { |k,v| @parts.keys.include?(k.to_sym) == false }
-        compatible_param_keys.each do |k|
-          val = params[k]
-          val.downcase! if DOWNCASED_ATTRIBUTES.include?(k)
-          @parts[k.to_sym] = params[k]
-        end
-        @uri = as_full
-      elsif params.is_a?(BackchatUri)
-        @parts = params.parts.clone
-        @uri = params.as_full
-        DOWNCASED_ATTRIBUTES.each do |atr|
-          @parts[atr.to_sym].downcase! if @parts[atr.to_sym]
-        end
-      end
-    
-      # Decode the credentials if they were previously encoded and options.decode_base64
-      if options[:decode_base64]
-        @parts[:user] = self.decode_b64_urlsafe(@parts[:user])
-        @parts[:password] = self.decode_b64_urlsafe(@parts[:password])
+      if param.is_a?(String)
+        @uri = param
+        @expanded = self.expand_uri(@uri)
+      elsif param.is_a?(Hash)
+        @expanded = param
+        @uri = to_canonical_s
+      elsif param.is_a?(BackchatUri)
+        @expanded = param.expanded.clone
+        @uri = param.to_canonical_s
       end
     end
     
@@ -62,15 +33,15 @@ module BackchatResource
     # def to_full_s(options={ :escape_hash => false })
     #   cred = resource = kind = nil
     # 
-    #   cred        = "#{self.encode_b64_urlsafe(@parts[:user])}:#{self.encode_b64_urlsafe(@parts[:password])}@"  if @parts[:user]
-    #   source      = @parts[:source]
-    #   source      = "#{source}:#{@parts[:port]}"      if @parts[:port]
-    #   resource    = "/#{@parts[:resource]}"           if @parts[:resource]
-    #   querystring = "?#{@parts[:querystring]}"        if @parts[:querystring]
-    #   kind        = "##{@parts[:kind]}"               if @parts[:kind]
-    #   resource_fr = "/#{@parts[:fragment_resource]}"  if @parts[:fragment_resource]
+    #   cred        = "#{self.encode_b64_urlsafe(@expanded[:user])}:#{self.encode_b64_urlsafe(@expanded[:password])}@"  if @expanded[:user]
+    #   source      = @expanded[:source]
+    #   source      = "#{source}:#{@expanded[:port]}"      if @expanded[:port]
+    #   resource    = "/#{@expanded[:resource]}"           if @expanded[:resource]
+    #   querystring = "?#{@expanded[:querystring]}"        if @expanded[:querystring]
+    #   kind        = "##{@expanded[:kind]}"               if @expanded[:kind]
+    #   resource_fr = "/#{@expanded[:fragment_resource]}"  if @expanded[:fragment_resource]
     # 
-    #   full_uri    = "#{@parts[:scheme]}://#{cred}#{source}#{resource}#{querystring}#{kind}#{resource_fr}"
+    #   full_uri    = "#{@expanded[:scheme]}://#{cred}#{source}#{resource}#{querystring}#{kind}#{resource_fr}"
     #   full_uri.gsub!("#","%23") if options[:escape_hash]
     # 
     #   full_uri
@@ -82,59 +53,57 @@ module BackchatResource
     def to_canonical_s(options={ :escape_hash => false })
       cred = resource = kind = nil
     
-      source      = @parts[:source]
-      source      = "#{source}:#{@parts[:port]}"      if @parts[:port]
-      resource    = "/#{@parts[:resource]}"           if @parts[:resource]
-      querystring = "?#{@parts[:querystring]}"        if @parts[:querystring]
-      kind        = "##{@parts[:kind]}"               if @parts[:kind]
-      resource_fr = "/#{@parts[:fragment_resource]}"  if @parts[:fragment_resource]
+      source      = @expanded[:source]
+      source      = "#{source}:#{@expanded[:port]}"      if @expanded[:port]
+      resource    = "/#{@expanded[:resource]}"           if @expanded[:resource]
+      querystring = "?#{@expanded[:querystring]}"        if @expanded[:querystring]
+      kind        = "##{@expanded[:kind]}"               if @expanded[:kind]
+      resource_fr = "/#{@expanded[:fragment_resource]}"  if @expanded[:fragment_resource]
     
-      canonical_uri = "#{@parts[:scheme]}://#{source}#{resource}#{kind}#{resource_fr}"
+      canonical_uri = "#{@expanded[:scheme]}://#{source}#{resource}#{kind}#{resource_fr}"
       canonical_uri.gsub!("#","%23") if options[:escape_hash]
     
       canonical_uri
     end
     
-    # Returns the URI in the bare form.
-    # @example scheme://source/resource
-    # @return string canonical URI
-    def to_bare_s(options={ :escape_hash => false })
-      cred = resource = kind = nil
-    
-      source      = @parts[:source]
-      source      = "#{source}:#{@parts[:port]}"      if @parts[:port]
-    
-      bare_uri    = "#{@parts[:scheme]}://#{source}"
-      bare_uri.gsub!("#","%23") if options[:escape_hash]
-    
-      bare_uri
-    end
+    # # Returns the URI in the bare form.
+    # # @example scheme://source/resource
+    # # @return string canonical URI
+    # def to_bare_s(options={ :escape_hash => false })
+    #   cred = resource = kind = nil
+    # 
+    #   source      = @expanded[:source]
+    #   source      = "#{source}:#{@expanded[:port]}"      if @expanded[:port]
+    # 
+    #   bare_uri    = "#{@expanded[:scheme]}://#{source}"
+    #   bare_uri.gsub!("#","%23") if options[:escape_hash]
+    # 
+    #   bare_uri
+    # end
     
     # def inspect
     #   "#<BackchatUri:#{as_full}>"
     # end
     
     def to_s
-      as_canonical
+      to_canonical_s
     end
     
     # Provide bcuri.host, etc
     def method_missing(method, *args, &block)  
-      if @parts
-        if @parts.key?(method)
-          return @parts[method]
+      if @expanded
+        if @expanded.key?(method)
+          return @expanded[method]
         end
-        # source = "something"
         m = method.to_s
     
-        if method.id2name =~ /(.+)=/ && (part = Regexp.last_match(1).to_sym) && @parts.key?(part)
+        if method.id2name =~ /(.+)=/ && (part = Regexp.last_match(1).to_sym) && @expanded.key?(part)
           val = args[0]
-          val.downcase! if DOWNCASED_ATTRIBUTES.include?(part.to_s)
-          @parts.merge!( part => val )
+          @expanded.merge!( part => val )
           return 
         end
       end
-      #raise NoMethodError
+      super
     end
     
     protected
@@ -143,61 +112,65 @@ module BackchatResource
     # Attributes are downcased later on in the life cycle. See DOWNCASED_ATTRIBUTES
     # @params String uri_s
     def self.parse(uri_s)
-      new parse_into_parts(uri_s)
+      new(expand_uri(uri_s))
     end
     
-    def self.parse_into_parts(uri_s)
-      uri = URI.unescape(uri_s)
+    def self.expand_uri(uri_s)
+      # uri = URI.unescape(uri_s)
       p = {}
-      r = BACKCHAT_URI_REGEX.match(uri)
+      
+      response = BackchatResource::Base.connection.get("#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['expand_uri_path']}")
+      JSON.parse(response.body)
+      
+      # r = BACKCHAT_URI_REGEX.match(uri)
 
-      p[:scheme]      = r[2]
-      p[:user]        = r[4]
-      p[:password]    = r[5]
-      p[:source]      = r[6]
-      p[:port]        = r[8]
-      p[:resource]    = r[10]
-      p[:resources]   = nil
-      p[:querystring] = r[12]
-      p[:query]       = nil
-      p[:kind]        = r[14]
-      p[:fragment_resource] = r[16]
-
-      # Break up the querystring and resource strings into more usable data structures
-      if p[:resource]
-        p[:resources] = p[:resource].split("/").reject(&:empty?)
-      end
-
-      # Break up the querystring into kvp
-      if p[:querystring]
-        # bql=something => pairs["bql=something"]
-        pairs = [ p[:querystring] ]
-
-        # bql=something&alt=something => pairs["bql=something","alt=something"]
-        if p[:querystring].index("&")
-          pairs = p[:querystring].split("&")
-        end
-
-        # Build up { "bql" => "something", "alt" => "something" }
-        kvp = {}
-        pairs.each do |pair|
-          t = pair.split("=")
-          kvp.merge!({ t[0] => t[1] })
-        end
-
-        p[:query] = kvp
-
-        # Allow for alternative username and password syntax
-        # ex: xmpp://xmpp.mojolly.com/adium?user=ivan@mojolly.com&pass=password#muc/room
-        p[:user]        = p[:query]["user"] if p[:query].key?("user")
-        p[:password]    = p[:query]["pass"] if p[:query].key?("pass")
-      end
-
-      # Tidy up some formatting
-      p[:port]        = p[:port].to_i if p[:port]
-      p[:querystring] = URI.escape(p[:querystring]) if p[:querystring]
-
-      p
+      # p[:scheme]      = r[2]
+      #       p[:user]        = r[4]
+      #       p[:password]    = r[5]
+      #       p[:source]      = r[6]
+      #       p[:port]        = r[8]
+      #       p[:resource]    = r[10]
+      #       p[:resources]   = nil
+      #       p[:querystring] = r[12]
+      #       p[:query]       = nil
+      #       p[:kind]        = r[14]
+      #       p[:fragment_resource] = r[16]
+      # 
+      #       # Break up the querystring and resource strings into more usable data structures
+      #       if p[:resource]
+      #         p[:resources] = p[:resource].split("/").reject(&:empty?)
+      #       end
+      # 
+      #       # Break up the querystring into kvp
+      #       if p[:querystring]
+      #         # bql=something => pairs["bql=something"]
+      #         pairs = [ p[:querystring] ]
+      # 
+      #         # bql=something&alt=something => pairs["bql=something","alt=something"]
+      #         if p[:querystring].index("&")
+      #           pairs = p[:querystring].split("&")
+      #         end
+      # 
+      #         # Build up { "bql" => "something", "alt" => "something" }
+      #         kvp = {}
+      #         pairs.each do |pair|
+      #           t = pair.split("=")
+      #           kvp.merge!({ t[0] => t[1] })
+      #         end
+      # 
+      #         p[:query] = kvp
+      # 
+      #         # Allow for alternative username and password syntax
+      #         # ex: xmpp://xmpp.mojolly.com/adium?user=ivan@mojolly.com&pass=password#muc/room
+      #         p[:user]        = p[:query]["user"] if p[:query].key?("user")
+      #         p[:password]    = p[:query]["pass"] if p[:query].key?("pass")
+      #       end
+      # 
+      #       # Tidy up some formatting
+      #       p[:port]        = p[:port].to_i if p[:port]
+      #       p[:querystring] = URI.escape(p[:querystring]) if p[:querystring]
+      
+      
     end
     
     # Base64 encode a string in a URL safe format
