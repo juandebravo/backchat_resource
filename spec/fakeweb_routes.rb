@@ -42,6 +42,21 @@ FakeWeb.register_uri(:get, %r[http://localhost:8080/1/streams/mojolly-crew],
 FakeWeb.register_uri(:get, %r[http://localhost:8080/1/sources/index.json], 
                     :body => load_web_api_fixture_file("sources"),
                     :status => ["200", "OK"])
-# FakeWeb.register_uri(:get, %r[http://localhost:8080/1/expand_uri/], 
-#                     :body => load_web_api_fixture_file("expand_uri"),
-#                     :status => ["200", "OK"])
+FakeWeb.register_uri(:get, "http://localhost:8080/1/expand_uri?channel=twitter://backchatio", 
+                    :body => load_web_api_fixture_file("expand_uri_twitterbackchatio"),
+                    :status => ["200", "OK"])
+FakeWeb.register_uri(:get, "http://localhost:8080/1/expand_uri?channel=twitter://backchatio%23timeline", 
+                    :body => load_web_api_fixture_file("expand_uri_twitterbackchatiotimeline"),
+                    :status => ["200", "OK"])
+FakeWeb.register_uri(:get, "http://localhost:8080/1/expand_uri?channel=twitter://backchatio?other=true%23timeline", 
+                    :body => load_web_api_fixture_file("expand_uri_twitterbackchatioother"),
+                    :status => ["200", "OK"])
+FakeWeb.register_uri(:get, "http://localhost:8080/1/source/email", 
+                    :body => load_web_api_fixture_file("source_email"),
+                    :status => ["200", "OK"])
+FakeWeb.register_uri(:get, %r[http://localhost:8080/1/source/twitter], 
+                    :body => load_web_api_fixture_file("source_twitter"),
+                    :status => ["200", "OK"])
+                    
+                    
+                    

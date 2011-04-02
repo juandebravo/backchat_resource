@@ -5,8 +5,8 @@
         "_id": "4d639aeab4ac7e1d8700000b",
         "channels": [
         {
-            "bare_uri": "twitter://brenda",
-            "full_uri": "twitter://brenda#timeline"
+            "bare_uri": "twitter://backchatio",
+            "full_uri": "twitter://backchatio#timeline"
         },
         {
             "bare_uri": "smtp://brenda.bieber-fever",

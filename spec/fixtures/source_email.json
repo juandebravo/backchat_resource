@@ -1,0 +1,43 @@
+{
+    "data": {
+        "_id": "EMAIL", 
+        "category": "OTHER", 
+        "created_at": "Mon, 21 Feb 2011 23:05:35 UTC", 
+        "default_auth_kind": "IMAP", 
+        "default_bare_uri_template": "{kind}://{target}", 
+        "default_canonical_uri_template": "{kind}://{target}", 
+        "default_kind": "SMTP", 
+        "display_name": "Email", 
+        "enabled": true, 
+        "kinds": [
+            {
+                "_id": "SMTP", 
+                "auth_type": "NoAuth", 
+                "bare_uri_template": "{kind}://{target}", 
+                "description": "Collect messages sent to a BackChat.io assigned email address.", 
+                "direction": "IN", 
+                "display_name": "BackChat.io Email Dropbox", 
+                "protocol": "SMTP", 
+                "short_display_name": "Email (Dropbox)"
+            }, 
+            {
+                "_id": "ACCOUNT", 
+                "auth_type": "NoAuth", 
+                "description": "Collect messages from a standard IMAP or POP3 email server.", 
+                "direction": "IN", 
+                "display_name": "Email Account", 
+                "protocol": "MAIL", 
+                "short_display_name": "Email (IMAP or POP3)"
+            }
+        ], 
+        "parse_templates": [
+            {
+                "is_default": true, 
+                "parse_template": "{kind}://{target}", 
+                "scheme": "smtp"
+            }
+        ], 
+        "updated_at": "Mon, 21 Feb 2011 23:05:35 UTC"
+    }, 
+    "errors": []
+}
