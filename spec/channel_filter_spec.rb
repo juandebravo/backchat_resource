@@ -16,10 +16,9 @@ describe "ChannelFilter" do
     cf.bql.should == 'text has "something in it"'
   end
 
-  it "should return nil if there is BQL string" do
+  it "should return nil if there is no BQL set" do
     cf = ChannelFilter.new
-    cf.bql = 'text has "something in it"'
-    cf.bql.should == 'text has "something in it"'
+    cf.bql.should == nil
   end
     
   it "can be built from a URI" do
@@ -29,7 +28,8 @@ describe "ChannelFilter" do
   
   it "should serialize a built ChannelFilter into a JSON format usable by a stream" do
     cf = ChannelFilter.build("twitter://backchatio#timeline")
-    cf.to_json.should == '{"enabled":false,"uri":"twitter://backchatio#timeline"}'
+    expected = "{\"enabled\":false,\"uri\":\"twitter://backchatio#timeline\"}"
+    cf.to_json.should == expected
   end
 
   it "should be disabled by default" do
@@ -48,10 +48,6 @@ describe "ChannelFilter" do
     cf = ChannelFilter.build("twitter://backchatio?other=true#timeline")
     cf.bql = 'text has "something"'
     cf.uri.to_s.should == "twitter://backchatio?bql=text%20has%20%22something%22&other=true#timeline"
-  end
-  
-  it "should return the Channel model it's filtering" do
-    pending
   end
   
 end

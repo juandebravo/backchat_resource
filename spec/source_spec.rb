@@ -15,6 +15,13 @@ describe "Source" do
     src.kinds.first.should be_instance_of Kind
   end
   
+  it "should have many kinds if specified in the API JSON document" do
+    src = Source.find_for_uri("email://")
+    src.kinds.should be_instance_of Array
+    src.kinds.first.should be_instance_of Kind    
+    src.kinds.length.should == 2
+  end
+  
   it "can find a Source Kind to match a URI" do
     kind = Kind.find_for_uri("twitter://casualjim?bql=something#timeline")
     kind.should be_instance_of Kind

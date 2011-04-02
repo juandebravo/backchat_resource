@@ -17,7 +17,6 @@ GEM
       activemodel (= 3.0.5)
       activesupport (= 3.0.5)
     activesupport (3.0.5)
-    addressable (2.2.4)
     autotest (4.4.6)
       ZenTest (>= 4.4.1)
     autotest-fsevent (0.2.5)
@@ -56,7 +55,6 @@ PLATFORMS
 
 DEPENDENCIES
   activeresource
-  addressable
   autotest
   autotest-fsevent
   bundler (~> 1.0.0)

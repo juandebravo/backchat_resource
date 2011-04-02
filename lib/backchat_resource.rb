@@ -1,12 +1,13 @@
-# Copyright Mojolly Ltd, 2011
-# @author Adam Burmister <adam@mojolly.com>
 # This library provides an ActiveResource wrapper around the BackChat.io message streaming platform's RESTful API.
 # It bridges ActiveResource's URL scheme to the BackChat.io API's URL scheme, allowing them to communicate together.
 # It also implements BackChat.io's custom JSON format.
 #
 # Example:
 #   BackchatResource::Models::Stream
-
+#
+# Copyright Mojolly Ltd, 2011
+# @author Adam Burmister <adam@mojolly.com>
+#
 require 'rubygems'
 require 'logger'
 require 'yaml'
@@ -17,12 +18,14 @@ module BackchatResource
   Root = File.dirname(__FILE__)
   $:.unshift Root
   
-  # Configuration properties for BackchatResource
-  CONFIG = YAML.load_file("#{BackchatResource::Root}/backchat_resource/config.yml")[(Rails.env rescue "defaults")] if !defined?(CONFIG)
+  
   
   class << self
     attr_accessor :logger
   end
+    
+  # Configuration properties for BackchatResource
+  CONFIG = YAML.load_file("#{BackchatResource::Root}/backchat_resource/config.yml")[defined?(DebugEnv) ? DebugEnv : "production"] if !defined?(CONFIG)
   
   # Sets up the credentials the ActiveResources will use to access the
   # BackChat.io API. Optionally takes a +logger+, which defaults to +STDOUT+.
@@ -32,11 +35,15 @@ module BackchatResource
   end
 end
 
+require 'backchat_resource/string_extensions'
 require 'backchat_resource/backchat_json_format'
 require 'backchat_resource/exceptions'
-require "backchat_resource/base"
+require 'backchat_resource/backchat_uri'
+require 'backchat_resource/base'
+require 'backchat_resource/models'
+include BackchatResource
 
-Dir["#{BackchatResource::Root}/backchat_resource/*.rb"].each {|file| require file }
+# Dir["#{BackchatResource::Root}/backchat_resource/*.rb"].each {|file| require file }
 
 # Enable debugging output if configured
 if BackchatResource::CONFIG["api"]["debug"]

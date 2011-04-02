@@ -5,8 +5,9 @@ module BackchatResource
       # Flag as a singleton resource so we don't pluralise URL paths (user -> users)
       singleton
       
+      # The schema doesn't seem to be setting up attribute readers for us
       attr_accessor :login, :password, :first_name, :last_name, :email
-            
+      
       schema do
         string '_id',
                'email',
@@ -64,7 +65,7 @@ module BackchatResource
         urls = [urls] if !urls.is_a?(Array)
         urls.each do |stream_url|
           # Extract the plan name form the URL: http://localhost:8080/1/stream/slug1 => slug1
-          slug = Addressable::URI.parse(stream_url).path.split("/").last
+          slug = stream_url.split("/").last
           @streams << Stream.find(slug)          
         end
       end
@@ -100,6 +101,35 @@ module BackchatResource
           attributes["plan"] = param.api_url
         end
         @plan = nil # clear cache
+      end
+      
+      # Find a channel within the current users channels collection that matches the `uri` param
+      # @param [URI, string]
+      # @return [Array<Channel>]
+      def find_channels_for_uri(uri)
+        uri = BackchatUri.parse(uri) if uri.is_a?(String)
+        results = []
+        channels.each do |ch|
+          results << ch if ch.uri.to_bare_s == uri.to_bare_s
+        end
+        results
+      end
+      
+      # Find all streams that reference the passed channel within the current user's scope
+      # @param [Channel] channel to search for in streams
+      # @return [Array<Stream>] matching streams
+      def find_streams_using_channel(ch)
+        return [] if ch.nil?
+        results = []
+        channel_uri = ch.uri.to_bare_s
+        streams.each do |strm| 
+          strm.channel_filters.each do |cf|
+            if cf.uri.to_bare_s == channel_uri
+              results << cf
+            end
+          end
+        end
+        results
       end
       
       # Ask the API to generate a 32 char random API key for the current user
