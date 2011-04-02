@@ -2,10 +2,15 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "User" do
 
-  TEST_USER = "brenda"
-  TEST_PASS = "gr33n"
-  TEST_FULLNAME = "Brenda Green"
-  TEST_API_KEY = "BRENDA_API_KEY"
+  TEST_USER = "casualjim"
+  TEST_PASS = "gevonden"
+  TEST_FULLNAME = "Ivan Porto Carrero"
+  TEST_API_KEY = "8b5087ba843f964cf1dd8fbe8b452b98"
+
+  # TEST_USER = "brenda"
+  # TEST_PASS = "gr33n"
+  # TEST_FULLNAME = "Brenda Green"
+  # TEST_API_KEY = "BRENDA_API_KEY"
   
   before(:each) do
     @user = User.authenticate(TEST_USER,TEST_PASS)
@@ -103,12 +108,12 @@ describe "User" do
   end
   
   it "should find a channel that matches a URI as input" do
-    @user.find_channels_for_uri("smtp://").should_not == nil
+    @user.find_channels_for_uri("twitter://brenda").should_not == nil
   end
   
   it "should find streams using a channel" do
     # puts @user.streams.inspect
-    ch = @user.find_channels_for_uri("email://")
+    ch = @user.find_channels_for_uri("smtp://brenda.bieber-fever#smtp")
     ch.should_not be_nil
     streams = @user.find_streams_using_channel(ch.first)
     streams.should_not == []

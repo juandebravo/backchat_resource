@@ -32,7 +32,9 @@ module BackchatResource
       # @param [string] BQL query to filter against the Channel
       def bql=(bql)
         @bql = bql
-        uri.query_values = (uri.query_values||{}).merge({:bql => bql})
+        puts uri.inspect
+        # (uri['params'] ||={})['bql'] = bql
+        uri.params['bql'] = bql
         self.uri = uri # store back in the 'uri' attribute
       end
       

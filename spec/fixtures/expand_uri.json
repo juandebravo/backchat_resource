@@ -1,4 +1,82 @@
 {
-	"data": {},
-	"errors": {}
+    "data": {
+        "http://flanders.co.nz/the_category/the_deal/topic?id=134949": {
+            "bare_uri": "http://flanders.co.nz/the-category/the-DEAL/topic?id=134949", 
+            "bare_uri_template": "http://{user_info}@{target}/{path}?{query}", 
+            "bql": "", 
+            "canonical_uri": "http://flanders.co.nz/the-category/the-DEAL/topic?id=134949", 
+            "canonical_uri_template": "http://{user_info}@{target}/{path}?{query}", 
+            "kind": {
+                "_id": "WEBFEED", 
+                "auth_type": "NoAuth", 
+                "description": "Collect messages from a ATOM or RSS web feed.", 
+                "direction": "IN", 
+                "display_name": "Web Feed", 
+                "protocol": "HTTP", 
+                "short_display_name": "Web Feed"
+            }, 
+            "params": {
+                "id": [
+                    "134949"
+                ]
+            }, 
+            "resource_kind": "", 
+            "resources": [
+                "the-category", 
+                "the-DEAL", 
+                "topic"
+            ], 
+            "source": {
+                "_id": "WEBFEED", 
+                "category": "OTHER", 
+                "created_at": "Mon, 21 Feb 2011 23:05:35 UTC", 
+                "default_auth_kind": "", 
+                "default_bare_uri_template": "http://{user_info}@{target}/{path}?{query}", 
+                "default_canonical_uri_template": "http://{user_info}@{target}/{path}?{query}", 
+                "default_kind": "WEBFEED", 
+                "display_name": "Web Feed", 
+                "enabled": true, 
+                "kinds": [
+                    {
+                        "_id": "WEBFEED", 
+                        "auth_type": "NoAuth", 
+                        "description": "Collect messages from a ATOM or RSS web feed.", 
+                        "direction": "IN", 
+                        "display_name": "Web Feed", 
+                        "protocol": "HTTP", 
+                        "short_display_name": "Web Feed"
+                    }
+                ], 
+                "parse_templates": [
+                    {
+                        "is_default": true, 
+                        "parse_template": "http://{user_info?}@{target}/{path~c}/?{query}", 
+                        "scheme": "http"
+                    }, 
+                    {
+                        "is_default": false, 
+                        "parse_template": "https://{user_info?}@{target}/{path~c}/?{query}", 
+                        "scheme": "https"
+                    }, 
+                    {
+                        "is_default": false, 
+                        "parse_template": "rss://{user_info?}@{target}/{path~c}/?{query}", 
+                        "scheme": "rss"
+                    }, 
+                    {
+                        "is_default": false, 
+                        "parse_template": "atom://{user_info?}@{target}/{path~c}/?{query}", 
+                        "scheme": "atom"
+                    }, 
+                    {
+                        "is_default": false, 
+                        "parse_template": "webfeed://{user_info?}@{target}/{path~c}/?{query}", 
+                        "scheme": "webfeed"
+                    }
+                ], 
+                "updated_at": "Mon, 21 Feb 2011 23:05:35 UTC"
+            }
+        }
+    }, 
+    "errors": []
 }

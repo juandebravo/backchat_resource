@@ -3,6 +3,12 @@ require 'backchat_resource/backchat_uri'
 
 describe "BackchatResource::BackchatUri" do
 
+  
+  it "can expand a uri" do
+    pending
+  end
+  
+  
   # # The blank shape to be merged with expected results
   # parts_shape = {
   #   :scheme=>nil,
@@ -15,7 +21,7 @@ describe "BackchatResource::BackchatUri" do
   #   :querystring=>nil,
   #   :query=>nil,
   #   :kind=>nil,
-  #   :fragment_resource=>nil
+  #   :resource_kind=>nil
   # }
   # 
   # context "convert from a uri" do
@@ -68,7 +74,7 @@ describe "BackchatResource::BackchatUri" do
   #      :scheme => "twitter",
   #      :source => "casualjim",
   #      :kind => "timeline",
-  #      :fragment_resource => "yesterday"
+  #      :resource_kind => "yesterday"
   #     })
   #   end
   # 
@@ -84,7 +90,7 @@ describe "BackchatResource::BackchatUri" do
   #      :resource => "mymacbook",
   #      :resources => ["mymacbook"],
   #      :kind => "muc",
-  #      :fragment_resource => "myroom"
+  #      :resource_kind => "myroom"
   #     })
   #   end
   # 
@@ -100,7 +106,7 @@ describe "BackchatResource::BackchatUri" do
   #      :resource => "mymacbook",
   #      :resources => ["mymacbook"],
   #      :kind => "muc",
-  #      :fragment_resource => "myroom"
+  #      :resource_kind => "myroom"
   #     })
   #   end
   # 
@@ -157,7 +163,7 @@ describe "BackchatResource::BackchatUri" do
   #      :resource => "adium",
   #      :resources => ["adium"],
   #      :kind => "muc",
-  #      :fragment_resource => "room"
+  #      :resource_kind => "room"
   #     })
   #   end
   # 
