@@ -47,9 +47,9 @@ module BackchatResource
       # Find a `Source` that would match the passed `URI`
       # @param [string, BackchatUri]
       def self.find_for_uri(uri)
-        uri = BackchatUri.parse(uri) if uri.is_a?(String)
-        return nil if uri.scheme.blank?
-        self.all.select { |src| src.id == uri.scheme.downcase }.first
+        scheme = uri.gsub(/:\/\/.*$/,'')
+        response = BackchatResource::Base.connection.get("#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['expand_source_path']}#{scheme}", BackchatResource::Base.headers)
+        new(response['data'])
       end
       
     end
@@ -159,17 +159,20 @@ module BackchatResource
       end
       
       # @return [Kind,nil] a Kind that matches the URL structure given as input
-      def self.find_for_uri(uri)
-        uri = BackchatUri.parse(uri) if uri.is_a?(String)
+      def self.find_for_uri(uri)        
+        # Input is something like "twitter://#timeline"
+        frag_kind = URI.parse(uri).fragment.downcase
         src = Source.find_for_uri(uri)
+        kind = nil
+        
         return nil if src.nil? || src.kinds.blank?
-        if uri.fragment
-          kind = src.kinds.select { |knd| knd.id == uri.fragment.downcase }.first
+        
+        if frag_kind
+          src.kinds.select { |knd| knd.id == frag_kind }.first
         end
         if kind.nil?
-          kind = src.kinds.select { |knd| knd.id == src.default_kind.downcase }.first
+          src.kinds.select { |knd| knd.id == src.default_kind.downcase }.first
         end
-        return kind
       end
       
     end

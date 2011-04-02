@@ -110,7 +110,7 @@ module BackchatResource
         uri = BackchatUri.parse(uri) if uri.is_a?(String)
         results = []
         channels.each do |ch|
-          results << ch if ch.uri.to_bare_s == uri.to_bare_s
+          results << ch if ch.uri.to_s == uri.to_s
         end
         results
       end
@@ -121,10 +121,10 @@ module BackchatResource
       def find_streams_using_channel(ch)
         return [] if ch.nil?
         results = []
-        channel_uri = ch.uri.to_bare_s
+        channel_uri = ch.uri.to_s
         streams.each do |strm| 
           strm.channel_filters.each do |cf|
-            if cf.uri.to_bare_s == channel_uri
+            if cf.uri.to_s == channel_uri
               results << cf
             end
           end

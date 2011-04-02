@@ -13,7 +13,9 @@ defaults: &defaults
     plans_path: "plans/"
     invite_code_path: "invite_code/"
     api_key_path: "api_key"
-    expand_uri_path: "expand_uri/"
+    expand_uri_path: "expand_uri"
+    expand_source_path: "source/"
+    compose_uri_path: "compose_uri"
   
 development:
   <<: *defaults

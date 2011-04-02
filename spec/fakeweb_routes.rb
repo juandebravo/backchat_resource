@@ -1,4 +1,4 @@
-FakeWeb.allow_net_connect = false          
+# FakeWeb.allow_net_connect = false
 
 # Load the contents of a fixture file
 # @param [string] file name without extension
@@ -42,6 +42,6 @@ FakeWeb.register_uri(:get, %r[http://localhost:8080/1/streams/mojolly-crew],
 FakeWeb.register_uri(:get, %r[http://localhost:8080/1/sources/index.json], 
                     :body => load_web_api_fixture_file("sources"),
                     :status => ["200", "OK"])
-FakeWeb.register_uri(:get, %r[http://localhost:8080/1/expand_uri/], 
-                    :body => load_web_api_fixture_file("expand_uri"),
-                    :status => ["200", "OK"])
+# FakeWeb.register_uri(:get, %r[http://localhost:8080/1/expand_uri/], 
+#                     :body => load_web_api_fixture_file("expand_uri"),
+#                     :status => ["200", "OK"])

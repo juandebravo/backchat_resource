@@ -4,10 +4,6 @@
 module BackchatResource
   class BackchatUri
     
-    # BACKCHAT_URI_REGEX = /^(([^:\/\?#]+):\/\/)?((.*):(.*)@)?([^?#\/:]*)(:(\d*))?(\/([^?#]*))?(\?([^#]*))?(#([^\/]*))?(\/(.*))?/
-    
-    # DOWNCASED_ATTRIBUTES = %w{scheme kind}
-    
     attr_accessor :uri
     
     @expanded = {}
@@ -27,86 +23,57 @@ module BackchatResource
       end
     end
     
-    # # Returns the URI in the full form. Full has all possible information on it
-    # # @example scheme://(user:secret@):source/resource#channel/path
-    # # @return string full URI
-    # def to_full_s(options={ :escape_hash => false })
-    #   cred = resource = kind = nil
-    # 
-    #   cred        = "#{self.encode_b64_urlsafe(@expanded[:user])}:#{self.encode_b64_urlsafe(@expanded[:password])}@"  if @expanded[:user]
-    #   source      = @expanded[:source]
-    #   source      = "#{source}:#{@expanded[:port]}"      if @expanded[:port]
-    #   resource    = "/#{@expanded[:resource]}"           if @expanded[:resource]
-    #   querystring = "?#{@expanded[:querystring]}"        if @expanded[:querystring]
-    #   kind        = "##{@expanded[:kind]}"               if @expanded[:kind]
-    #   resource_fr = "/#{@expanded[:fragment_resource]}"  if @expanded[:fragment_resource]
-    # 
-    #   full_uri    = "#{@expanded[:scheme]}://#{cred}#{source}#{resource}#{querystring}#{kind}#{resource_fr}"
-    #   full_uri.gsub!("#","%23") if options[:escape_hash]
-    # 
-    #   full_uri
-    # end
+    # @return [Source] A Source model instance describing the source associated with this URI
+    def source
+      @source ||= Source.new(@expanded['source'])
+    end
+        
+    # @return [Kind] A Kind model instance describing the kind associated with this URI
+    def kind
+      @kind ||= Kind.new(@expanded['kind'])
+    end
+    
+    # Uhhh... it provides some extra info for odd use cases. Rarely used.
+    # i.e. Voice/SMS
+    def resource_kind
+      @expanded['resource_kind']
+    end
+    
+    # @param [String] Set the resource kind for this URI
+    def resource_kind=(val)
+      @expanded['resource_kind'] = val
+    end
+    
+    # @return [Hash] Any querystring parameters for this URI
+    def params
+      @expanded['params'] ||= {}
+    end
+    
+    # The target of a BackChat URI varies on context. In a twitter channel the target is
+    # the username, or in an RSS feed the target is the URL of the XML document.
+    # @return [String]
+    def target
+      @expanded['target']
+    end
+    
+    # @param [String] new target for this BackChat URI
+    def target=(val)
+      @expanded['target'] = val
+    end
+    
     
     # Returns the URI in the canonical form. Canonical has everything but credentials
     # @example scheme://source/resource#channel/path
     # @return string canonical URI
     def to_canonical_s(options={ :escape_hash => false })
-      cred = resource = kind = nil
-    
-      source      = @expanded[:source]
-      source      = "#{source}:#{@expanded[:port]}"      if @expanded[:port]
-      resource    = "/#{@expanded[:resource]}"           if @expanded[:resource]
-      querystring = "?#{@expanded[:querystring]}"        if @expanded[:querystring]
-      kind        = "##{@expanded[:kind]}"               if @expanded[:kind]
-      resource_fr = "/#{@expanded[:fragment_resource]}"  if @expanded[:fragment_resource]
-    
-      canonical_uri = "#{@expanded[:scheme]}://#{source}#{resource}#{kind}#{resource_fr}"
-      canonical_uri.gsub!("#","%23") if options[:escape_hash]
-    
-      canonical_uri
+      # POST back to build_uri endpoint with @expanded and the {:source=>value}
+      recompose_uri
+      @expanded['canonical_uri']
     end
-    
-    # # Returns the URI in the bare form.
-    # # @example scheme://source/resource
-    # # @return string canonical URI
-    # def to_bare_s(options={ :escape_hash => false })
-    #   cred = resource = kind = nil
-    # 
-    #   source      = @expanded[:source]
-    #   source      = "#{source}:#{@expanded[:port]}"      if @expanded[:port]
-    # 
-    #   bare_uri    = "#{@expanded[:scheme]}://#{source}"
-    #   bare_uri.gsub!("#","%23") if options[:escape_hash]
-    # 
-    #   bare_uri
-    # end
-    
-    # def inspect
-    #   "#<BackchatUri:#{as_full}>"
-    # end
     
     def to_s
       to_canonical_s
     end
-    
-    # Provide bcuri.host, etc
-    def method_missing(method, *args, &block)  
-      if @expanded
-        if @expanded.key?(method)
-          return @expanded[method]
-        end
-        m = method.to_s
-    
-        if method.id2name =~ /(.+)=/ && (part = Regexp.last_match(1).to_sym) && @expanded.key?(part)
-          val = args[0]
-          @expanded.merge!( part => val )
-          return 
-        end
-      end
-      super
-    end
-    
-    protected
     
     # Parse a BackchatUriString into a hash
     # Attributes are downcased later on in the life cycle. See DOWNCASED_ATTRIBUTES
@@ -116,61 +83,12 @@ module BackchatResource
     end
     
     def self.expand_uri(uri_s)
-      # uri = URI.unescape(uri_s)
+      uri = URI.escape(uri_s)
       p = {}
       
-      response = BackchatResource::Base.connection.get("#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['expand_uri_path']}")
-      JSON.parse(response.body)
+      response = BackchatResource::Base.connection.get("#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['expand_uri_path']}?channel=#{uri}", BackchatResource::Base.headers)
       
-      # r = BACKCHAT_URI_REGEX.match(uri)
-
-      # p[:scheme]      = r[2]
-      #       p[:user]        = r[4]
-      #       p[:password]    = r[5]
-      #       p[:source]      = r[6]
-      #       p[:port]        = r[8]
-      #       p[:resource]    = r[10]
-      #       p[:resources]   = nil
-      #       p[:querystring] = r[12]
-      #       p[:query]       = nil
-      #       p[:kind]        = r[14]
-      #       p[:fragment_resource] = r[16]
-      # 
-      #       # Break up the querystring and resource strings into more usable data structures
-      #       if p[:resource]
-      #         p[:resources] = p[:resource].split("/").reject(&:empty?)
-      #       end
-      # 
-      #       # Break up the querystring into kvp
-      #       if p[:querystring]
-      #         # bql=something => pairs["bql=something"]
-      #         pairs = [ p[:querystring] ]
-      # 
-      #         # bql=something&alt=something => pairs["bql=something","alt=something"]
-      #         if p[:querystring].index("&")
-      #           pairs = p[:querystring].split("&")
-      #         end
-      # 
-      #         # Build up { "bql" => "something", "alt" => "something" }
-      #         kvp = {}
-      #         pairs.each do |pair|
-      #           t = pair.split("=")
-      #           kvp.merge!({ t[0] => t[1] })
-      #         end
-      # 
-      #         p[:query] = kvp
-      # 
-      #         # Allow for alternative username and password syntax
-      #         # ex: xmpp://xmpp.mojolly.com/adium?user=ivan@mojolly.com&pass=password#muc/room
-      #         p[:user]        = p[:query]["user"] if p[:query].key?("user")
-      #         p[:password]    = p[:query]["pass"] if p[:query].key?("pass")
-      #       end
-      # 
-      #       # Tidy up some formatting
-      #       p[:port]        = p[:port].to_i if p[:port]
-      #       p[:querystring] = URI.escape(p[:querystring]) if p[:querystring]
-      
-      
+      response['data'].first.last
     end
     
     # Base64 encode a string in a URL safe format
@@ -183,6 +101,24 @@ module BackchatResource
     # @params String base64-urlsafe encoded string to decode
     def self.encode_b64_urlsafe(s)
       decoded = s.tr('-_','+/').unpack('m')[0]
+    end
+    
+    protected
+    
+    # Refresh a URI with the API expand URI endpoint, updating the URI @expanded state
+    def recompose_uri
+      return "" if @expanded.empty?
+      
+      payload = {
+        :canonical_uri => @expanded['canonical_uri'],
+        :target => @expanded['target'],
+        :params => params,
+        :resource_kind => @expanded['resource_kind'],
+        :source => (@expanded['source'] || {})['_id'],
+        :kind => (@expanded['kind'] || {})['_id']
+      }.to_query
+      response = BackchatResource::Base.connection.post("#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['compose_uri_path']}", payload, BackchatResource::Base.headers)
+      @expanded = response['data']
     end
     
   end
