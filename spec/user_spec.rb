@@ -2,15 +2,10 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "User" do
 
-  TEST_USER = "casualjim"
-  TEST_PASS = "gevonden"
-  TEST_FULLNAME = "Ivan Porto Carrero"
-  TEST_API_KEY = "8b5087ba843f964cf1dd8fbe8b452b98"
-
-  # TEST_USER = "brenda"
-  # TEST_PASS = "gr33n"
-  # TEST_FULLNAME = "Brenda Green"
-  # TEST_API_KEY = "BRENDA_API_KEY"
+  TEST_USER = "brenda"
+  TEST_PASS = "gr33n"
+  TEST_FULLNAME = "Brenda Green"
+  TEST_API_KEY = "BRENDA_API_KEY"
   
   before(:each) do
     @user = User.authenticate(TEST_USER,TEST_PASS)
