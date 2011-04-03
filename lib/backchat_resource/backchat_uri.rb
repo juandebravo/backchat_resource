@@ -35,17 +35,18 @@ module BackchatResource
     
     # Uhhh... it provides some extra info for odd use cases. Rarely used.
     # i.e. Voice/SMS
-    def resource_kind
-      @expanded['resource_kind']
+    # @return [String]
+    def kind_resource
+      @expanded['kind_resource']
     end
     
     # @param [String] Set the resource kind for this URI
-    def resource_kind=(val)
-      @expanded['resource_kind'] = val
+    def kind_resource=(val)
+      @expanded['kind_resource'] = val
     end
     
     # @return [Hash] Any querystring parameters for this URI
-    def params
+    def querystring_params
       @expanded['params'] ||= {}
     end
     
@@ -112,8 +113,8 @@ module BackchatResource
       payload = {
         :canonical_uri => @expanded['canonical_uri'],
         :target => @expanded['target'],
-        :params => params,
-        :resource_kind => @expanded['resource_kind'],
+        :params => querystring_params,
+        :kind_resource => @expanded['kind_resource'],
         :source => (@expanded['source'] || {})['_id'],
         :kind => (@expanded['kind'] || {})['_id']
       }.to_query

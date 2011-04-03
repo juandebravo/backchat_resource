@@ -1,6 +1,7 @@
 # Load all the models into the module
 module BackchatResource
   module Models
+    autoload :Cacheable, 'backchat_resource/models/cacheable'
     autoload :User, 'backchat_resource/models/user'
     autoload :Stream, 'backchat_resource/models/stream'
     autoload :Channel, 'backchat_resource/models/channel'

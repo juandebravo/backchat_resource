@@ -3,6 +3,9 @@ module BackchatResource
     # @note Read only
     # A `Source` model describes the origin source of a message: such as twitter, email, RSS, XMPP, etc
     class Source < BackchatResource::Base
+      
+      include Cacheable
+      
       schema do
         string '_id', 
                'category', 

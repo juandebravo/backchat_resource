@@ -19,7 +19,7 @@
                     "true"
                 ]
             }, 
-            "resource_kind": "timeline", 
+            "kind_resource": "timeline", 
             "resources": [], 
             "source": {
                 "_id": "TWITTER", 

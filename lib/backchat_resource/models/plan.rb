@@ -3,6 +3,9 @@
 module BackchatResource
   module Models
     class Plan < BackchatResource::Base
+      
+      include Cacheable
+      
       schema do
         string 'name',
                'streams_limit', 
