@@ -15,7 +15,7 @@
                 "short_display_name": "Twitter (Timeline)"
             }, 
             "params": {}, 
-            "resource_kind": "timeline", 
+            "kind_resource": "timeline", 
             "resources": [], 
             "source": {
                 "_id": "TWITTER", 
