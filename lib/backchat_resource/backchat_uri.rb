@@ -87,7 +87,7 @@ module BackchatResource
       uri = URI.escape(uri_s)
       p = {}
       
-      response = BackchatResource::Base.connection.get(expand_uri_uri, BackchatResource::Base.headers)
+      response = BackchatResource::Base.connection.get(expand_uri_uri(uri), BackchatResource::Base.headers)
       
       response['data'].first.last
     end
