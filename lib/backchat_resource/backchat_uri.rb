@@ -87,10 +87,12 @@ module BackchatResource
       uri = URI.escape(uri_s)
       p = {}
       
-      response = BackchatResource::Base.connection.get("#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['expand_uri_path']}?channel=#{uri}", BackchatResource::Base.headers)
+      response = BackchatResource::Base.connection.get(expand_uri_uri, BackchatResource::Base.headers)
       
       response['data'].first.last
     end
+    
+    protected
     
     # Base64 encode a string in a URL safe format
     # @params String 
@@ -104,8 +106,6 @@ module BackchatResource
       decoded = s.tr('-_','+/').unpack('m')[0]
     end
     
-    protected
-    
     # Refresh a URI with the API expand URI endpoint, updating the URI @expanded state
     def recompose_uri
       return "" if @expanded.empty?
@@ -118,8 +118,16 @@ module BackchatResource
         :source => (@expanded['source'] || {})['_id'],
         :kind => (@expanded['kind'] || {})['_id']
       }.to_query
-      response = BackchatResource::Base.connection.post("#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['compose_uri_path']}", payload, BackchatResource::Base.headers)
+      response = BackchatResource::Base.connection.post(self.compose_uri_uri, payload, BackchatResource::Base.headers)
       @expanded = response['data']
+    end
+    
+    def self.compose_uri_uri
+      "#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['compose_uri_path']}"
+    end
+    
+    def self.expand_uri_uri(uri)
+      "#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['expand_uri_path']}?channel=#{uri}"
     end
     
   end

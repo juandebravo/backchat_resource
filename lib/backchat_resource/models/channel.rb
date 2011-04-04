@@ -9,9 +9,9 @@ module BackchatResource
       
       # TODO:
       # Access properties on the URI as if they were on the Channel
-      # set scheme [Kind,string]
+      # set source [Source,Kind,string]
       # set kind [Kind,string]
-      # source/target
+      # target
       # 
       
       # @return [Source]
