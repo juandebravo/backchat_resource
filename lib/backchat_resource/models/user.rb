@@ -133,14 +133,16 @@ module BackchatResource
       end
       
       # Ask the API to generate a 32 char random API key for the current user
-      # @return [String] 32 char API key
+      # return [User]
       def generate_random_api_key!
         payload = {}
         response = connection.put("#{self.class.site}#{BackchatResource::CONFIG['api']['api_key_path']}.#{self.class.format.extension}", payload.to_query, self.class.headers)
         body = JSON.parse(response.body)
-        api_key = body["api_key"]
+        api_key = body["data"]["api_key"]
+        self.api_key = api_key
+        self.class.api_key = api_key
         BackchatResource::Base.api_key = api_key
-        api_key
+        User.new(body)
       end
       
       # Authenticate a user and set the API key on BackchatResource::Base to the authenticated user

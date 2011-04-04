@@ -4,9 +4,9 @@ An ActiveResource wrapper around the BackChat.io RESTful API
 
 == TODO's
 
-* Add a caching layer to the base model
-** Perhaps a single `cache` keyword, with options hash `{ :length => :forever }`
+* Add caching layer hooks
 * Increase code coverage to at least 80%
+* Write unit tests for new compose_uri endpoint
 
 == Copyright
 

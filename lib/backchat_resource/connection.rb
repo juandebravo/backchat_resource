@@ -1,5 +1,5 @@
 require 'active_resource'
-require 'cache'
+# require 'cache'
 
 module ActiveResource
   # Class to handle connections to remote web services.
@@ -8,10 +8,6 @@ module ActiveResource
   # It overrides the ActiveResource::Connection class to add in an extra
   # caching layer, reducing needless requests to the BackChat.io API.
   class Connection
-    
-    def cache
-      @cache ||= Cache.new(100 * 1024, 100 * 1024 * 1024, 256, 1)
-    end
     
     private
     

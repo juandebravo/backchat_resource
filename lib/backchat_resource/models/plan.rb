@@ -4,7 +4,7 @@ module BackchatResource
   module Models
     class Plan < BackchatResource::Base
       
-      include Cacheable
+      extend Cacheable
       
       schema do
         string 'name',

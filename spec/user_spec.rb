@@ -20,8 +20,10 @@ describe "User" do
   
   # it "generates a random api_key for a logged in user" do
   #   old_api_key = @user.api_key
-  #   @user.generate_random_api_key!
+  #   key = @user.generate_random_api_key!
   #   @user.api_key.should_not == old_api_key
+  #   @user.api_key.should be_an_instance_of String
+  #   key.should == @user.api_key
   # end
   
   it "sends password reminders for non-logged in users" do
