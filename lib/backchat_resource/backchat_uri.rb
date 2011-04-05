@@ -76,19 +76,16 @@ module BackchatResource
       to_canonical_s
     end
     
-    # Parse a BackchatUriString into a hash
+    # Parse a URI string into a BackchatUri
     # Attributes are downcased later on in the life cycle. See DOWNCASED_ATTRIBUTES
     # @params String uri_s
     def self.parse(uri_s)
       new(expand_uri(uri_s))
     end
     
+    # @return [Hash] expanded URI data
     def self.expand_uri(uri_s)
-      uri = URI.escape(uri_s)
-      p = {}
-      
-      response = BackchatResource::Base.connection.get(expand_uri_uri(uri), BackchatResource::Base.headers)
-      
+      response = BackchatResource::Base.connection.get(expand_uri_uri(uri_s), BackchatResource::Base.headers)
       response['data'].first.last
     end
     
@@ -117,17 +114,22 @@ module BackchatResource
         :kind_resource => @expanded['kind_resource'],
         :source => (@expanded['source'] || {})['_id'],
         :kind => (@expanded['kind'] || {})['_id']
-      }.to_query
-      response = BackchatResource::Base.connection.post(self.compose_uri_uri, payload, BackchatResource::Base.headers)
+      }
+      response = BackchatResource::Base.connection.get(BackchatUri.compose_uri_uri(payload), BackchatResource::Base.headers)
       @expanded = response['data']
     end
     
-    def self.compose_uri_uri
-      "#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['compose_uri_path']}"
+    # @param [Hash] querystring params
+    # @return [String] URI to the compose URI endpoint
+    def self.compose_uri_uri(params)
+      params.delete_if {|key, value| value.blank? }
+      "#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['compose_uri_path']}?#{params.to_query}"
     end
     
+    # @param [String] URI to expand
+    # @return [String] URI to the expand endpoint
     def self.expand_uri_uri(uri)
-      "#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['expand_uri_path']}?channel=#{uri}"
+      "#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['expand_uri_path']}?channel=#{URI.escape(uri.to_s)}"
     end
     
   end

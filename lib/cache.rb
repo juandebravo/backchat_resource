@@ -126,7 +126,7 @@ class Cache
     elsif block_given?
       return yield(key)
     end
-    obj.content
+    obj.content if obj
   end
   alias :delete :invalidate
 

@@ -59,12 +59,20 @@ describe "BackchatResource::BackchatUri" do
     pending
   end
   
-  it "can set a querystring param and have it rendered as a string" do
+  it "can compose a URI, updating it's target to be something else" do
+    uri = "twitter://backchatio#timeline"
+    expected = "twitter://mojolly#timeline"
+    
+    pending
+  end
+  
+  it "can compose a URI, set a querystring param and have it rendered as a string" do
     pending
   end
 
-  it "can set a querystring param, and not clobber any other existing params, and have it rendered as a string" do
+  it "can compose a URI, set a querystring param, and not clobber any other existing params, and have it rendered as a string" do
     pending
   end
+
 
 end

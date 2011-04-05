@@ -1,4 +1,4 @@
-FakeWeb.allow_net_connect = false
+# FakeWeb.allow_net_connect = false
 
 # Load the contents of a fixture file
 # @param [string] file name without extension
@@ -51,12 +51,12 @@ FakeWeb.register_uri(:get, "http://localhost:8080/1/expand_uri?channel=twitter:/
 FakeWeb.register_uri(:get, "http://localhost:8080/1/expand_uri?channel=twitter://backchatio?other=true%23timeline", 
                     :body => load_web_api_fixture_file("expand_uri_twitterbackchatioother"),
                     :status => ["200", "OK"])
+FakeWeb.register_uri(:get, %r[http://localhost:8080/1/compose_uri], 
+                    :body => load_web_api_fixture_file("compose_uri"),
+                    :status => ["200", "OK"])
 FakeWeb.register_uri(:get, "http://localhost:8080/1/source/email", 
                     :body => load_web_api_fixture_file("source_email"),
                     :status => ["200", "OK"])
 FakeWeb.register_uri(:get, %r[http://localhost:8080/1/source/twitter], 
                     :body => load_web_api_fixture_file("source_twitter"),
                     :status => ["200", "OK"])
-                    
-                    
-                    

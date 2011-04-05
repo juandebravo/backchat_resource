@@ -1,0 +1,39 @@
+{
+    "data": {
+        "canonical_uri": "http://backchatio/#webfeed", 
+        "kind": {
+            "_id": "WEBFEED", 
+            "auth_type": "NoAuth", 
+            "description": "Collect messages from a ATOM or RSS web feed.", 
+            "direction": "IN", 
+            "display_name": "Web Feed", 
+            "protocol": "HTTP", 
+            "short_display_name": "Web Feed"
+        }, 
+        "kind_resource": "", 
+        "resources": [], 
+        "source": {
+            "_id": "WEBFEED", 
+            "category": "OTHER", 
+            "created_at": "Mon, 21 Feb 2011 23:05:35 UTC", 
+            "default_auth_kind": "", 
+            "default_kind": "WEBFEED", 
+            "display_name": "Web Feed", 
+            "enabled": true, 
+            "kinds": [
+                {
+                    "_id": "WEBFEED", 
+                    "auth_type": "NoAuth", 
+                    "description": "Collect messages from a ATOM or RSS web feed.", 
+                    "direction": "IN", 
+                    "display_name": "Web Feed", 
+                    "protocol": "HTTP", 
+                    "short_display_name": "Web Feed"
+                }
+            ], 
+            "updated_at": "Mon, 21 Feb 2011 23:05:35 UTC"
+        }, 
+        "target": "backchatio"
+    }, 
+    "errors": []
+}
