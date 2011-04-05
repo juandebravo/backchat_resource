@@ -5,7 +5,7 @@ describe "User" do
   TEST_USER = "brenda"
   TEST_PASS = "gr33n"
   TEST_FULLNAME = "Brenda Green"
-  TEST_API_KEY = "BRENDA_API_KEY"
+  TEST_API_KEY = "ddada53db6eb6eed4b4e555883a0acc3"
   
   before(:each) do
     @user = User.authenticate(TEST_USER,TEST_PASS)
@@ -116,15 +116,14 @@ describe "User" do
     streams.should_not == []
   end
   
-  it "should return empty array when finding streams using a channel for the curerent_user and no such streams exist" do
-    pending
-    # ch = Channel.new(:uri => "twitter://madeup#timeline")
-    # streams = @user.find_streams_using_channel(ch)
-    # streams.should == []
+  it "should return empty array when finding streams using a channel for the current_user and no such streams exist" do
+    ch = Channel.new(:uri => "twitter://madeup#timeline")
+    streams = @user.find_streams_using_channel(ch)
+    streams.should == []
   end
   
   it "should save changes to stream objects on user save" do
-    pending "Streams are saved to a different URL than user, so on save also post/put /1/streams/"
+    @user.streams[0].should_receive :save
   end
   
 end

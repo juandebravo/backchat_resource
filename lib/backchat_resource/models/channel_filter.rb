@@ -9,13 +9,16 @@ module BackchatResource
 
       belongs_to :stream
       
-      attr_reader :bql
+      attr_reader :uri, :bql
 
       # Set default values
       def initialize(options={})
-        @uri = BackchatUri.new
         super(options)
         attributes["enabled"] ||= false
+        
+        self.uri = options[:uri] if options.key?(:uri)
+        self.enabled = options[:enabled] if options.key?(:enabled)
+        self.bql = options[:bql] if options.key?(:bql)
       end
       
       def uri
@@ -29,12 +32,16 @@ module BackchatResource
         @uri = nil # clear cache
       end
       
+      def bql
+        uri.bql
+      end
+      
       # @param [string] BQL query to filter against the Channel
       def bql=(bql)
-        @bql = bql
-        puts uri.inspect
+        # @bql = bql
+        # puts uri.inspect
         # (uri['params'] ||={})['bql'] = bql
-        uri.querystring_params['bql'] = bql
+        uri.bql = bql
         self.uri = uri # store back in the 'uri' attribute
       end
       

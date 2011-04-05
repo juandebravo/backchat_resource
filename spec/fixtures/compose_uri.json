@@ -1,39 +1,48 @@
 {
-    "data": {
-        "canonical_uri": "http://backchatio/#webfeed", 
-        "kind": {
-            "_id": "WEBFEED", 
-            "auth_type": "NoAuth", 
-            "description": "Collect messages from a ATOM or RSS web feed.", 
-            "direction": "IN", 
-            "display_name": "Web Feed", 
-            "protocol": "HTTP", 
-            "short_display_name": "Web Feed"
-        }, 
-        "kind_resource": "", 
-        "resources": [], 
+    "data": [{
+        "canonical_uri": "smtp://brenda.bieber-fever/#smtp",
+        "target": "brenda.bieber-fever",
+        "resources": [],
         "source": {
-            "_id": "WEBFEED", 
-            "category": "OTHER", 
-            "created_at": "Mon, 21 Feb 2011 23:05:35 UTC", 
-            "default_auth_kind": "", 
-            "default_kind": "WEBFEED", 
-            "display_name": "Web Feed", 
-            "enabled": true, 
-            "kinds": [
-                {
-                    "_id": "WEBFEED", 
-                    "auth_type": "NoAuth", 
-                    "description": "Collect messages from a ATOM or RSS web feed.", 
-                    "direction": "IN", 
-                    "display_name": "Web Feed", 
-                    "protocol": "HTTP", 
-                    "short_display_name": "Web Feed"
-                }
-            ], 
-            "updated_at": "Mon, 21 Feb 2011 23:05:35 UTC"
-        }, 
-        "target": "backchatio"
-    }, 
+            "display_name": "Email",
+            "enabled": true,
+            "updated_at": "Mon, 21 Feb 2011 23:05:35 UTC",
+            "created_at": "Mon, 21 Feb 2011 23:05:35 UTC",
+            "_id": "EMAIL",
+            "category": "OTHER",
+            "default_kind": "SMTP",
+            "default_auth_kind": "IMAP",
+            "kinds": [{
+                "_id": "SMTP",
+                "display_name": "BackChat.io Email Dropbox",
+                "short_display_name": "Email (Dropbox)",
+                "description": "Collect messages sent to a BackChat.io assigned email address.",
+                "direction": "IN",
+                "protocol": "SMTP",
+                "bare_uri_template": "{kind}://{target}",
+                "auth_type": "NoAuth"
+            },
+            {
+                "_id": "ACCOUNT",
+                "display_name": "Email Account",
+                "short_display_name": "Email (IMAP or POP3)",
+                "description": "Collect messages from a standard IMAP or POP3 email server.",
+                "direction": "IN",
+                "protocol": "MAIL",
+                "auth_type": "NoAuth"
+            }]
+        },
+        "kind": {
+            "_id": "SMTP",
+            "display_name": "BackChat.io Email Dropbox",
+            "short_display_name": "Email (Dropbox)",
+            "description": "Collect messages sent to a BackChat.io assigned email address.",
+            "direction": "IN",
+            "protocol": "SMTP",
+            "auth_type": "NoAuth"
+        },
+        "kind_resource": "",
+        "raw_uri": "smtp://brenda.bieber-fever#smtp"
+    }],
     "errors": []
 }

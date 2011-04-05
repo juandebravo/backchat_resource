@@ -1,11 +1,10 @@
+require "addressable/uri"
+
 module BackchatResource
   module Models
     # @note Read only
     # A `Source` model describes the origin source of a message: such as twitter, email, RSS, XMPP, etc
     class Source < BackchatResource::Base
-      
-      extend Cacheable
-      
       schema do
         string '_id', 
                'category', 
@@ -50,7 +49,7 @@ module BackchatResource
       # Find a `Source` that would match the passed `URI`
       # @param [string, BackchatUri]
       def self.find_for_uri(uri)
-        scheme = uri.gsub(/:\/\/.*$/,'')
+        scheme = uri.to_s.gsub(/:\/\/.*$/,'')
         response = BackchatResource::Base.connection.get("#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['expand_source_path']}#{scheme}", BackchatResource::Base.headers)
         new(response['data'])
       end
@@ -164,7 +163,8 @@ module BackchatResource
       # @return [Kind,nil] a Kind that matches the URL structure given as input
       def self.find_for_uri(uri)        
         # Input is something like "twitter://#timeline"
-        frag_kind = URI.parse(uri).fragment.downcase
+        frag_kind = Addressable::URI.parse(uri.to_s).fragment.downcase
+        # frag_kind = URI.parse(uri).fragment.downcase
         src = Source.find_for_uri(uri)
         kind = nil
         

@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "Source" do
 
-  TEST_URI = "twitter://casualjim?bql=something#timeline"
+  TEST_URI = "twitter://backchatio?bql=something#timeline"
   
   it "can find a Source to match a URI" do
     src = Source.find_for_uri(TEST_URI)
@@ -23,14 +23,14 @@ describe "Source" do
   end
   
   it "can find a Source Kind to match a URI" do
-    kind = Kind.find_for_uri("twitter://casualjim?bql=something#timeline")
+    kind = Kind.find_for_uri("twitter://backchatio?bql=something#timeline")
     kind.should be_instance_of Kind
     kind.id.should == "timeline"
     kind.display_name.should == "Twitter Timeline"
   end
   
   it "should serialize a kind to JSON" do
-    kind = Kind.find_for_uri("twitter://casualjim?bql=something#timeline")
+    kind = Kind.find_for_uri("twitter://backchatio?bql=something#timeline")
     kind.to_json.should == "{\"_id\":\"TIMELINE\",\"auth_type\":\"NoAuth\",\"description\":\"Collect a timeline of all public tweets from any Twitter user.\",\"direction\":\"IN\",\"display_name\":\"Twitter Timeline\",\"protocol\":\"HTTPS\",\"short_display_name\":\"Twitter (Timeline)\"}"
   end
   
