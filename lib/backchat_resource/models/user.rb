@@ -6,7 +6,7 @@ module BackchatResource
       singleton
       
       # The schema doesn't seem to be setting up attribute readers for us
-      attr_accessor :login, :password, :first_name, :last_name, :email
+      # attr_accessor :login, :password, :first_name, :last_name, :email
       
       schema do
         string '_id',
@@ -149,19 +149,25 @@ module BackchatResource
       # @param [string] username
       # @param [string] password
       # @return {User|nil} The User model belonging to the passed in credentials or nil if none was found
-      def self.authenticate(username, password)
+      def self.authenticate(username, password=nil)
         begin
-          payload = {
-            :username => username,
-            :password => password
-          }
-          response = connection.post("#{self.site}#{BackchatResource::CONFIG['api']['login_path']}.#{self.format.extension}", payload.to_query)
-          body = JSON.parse(response.body)
-          if body["data"]["api_key"]
-            BackchatResource::Base.api_key = body["data"]["api_key"]
-            new(body)
+          if password.nil?
+            # Assume username is API_KEY
+            BackchatResource::Base.api_key = username
+            find
           else
-            nil # warden expects a failure to return nil
+            payload = {
+              :username => username,
+              :password => password
+            }
+            response = connection.post(self.login_path, payload.to_query)
+            body = JSON.parse(response.body)
+            if body["data"]["api_key"]
+              BackchatResource::Base.api_key = body["data"]["api_key"]
+              new(body)
+            else
+              nil # warden expects a failure to return nil
+            end
           end
         rescue ActiveResource::UnauthorizedAccess
           nil
@@ -191,12 +197,16 @@ module BackchatResource
         super
       end
       
-      private
+      #protected
       
       # Override the element path to match the BackChat.io API structure - the root is the user element
       # https://api.backchat.io/{API_VERS}/
-      def self.element_path(id, prefix_options = {}, query_options = nil)
+      def self.element_path(id=nil, prefix_options = {}, query_options = nil)
         "#{self.site}#{BackchatResource::CONFIG['api']['user_path']}index.#{self.format.extension}"
+      end
+      
+      def self.login_path
+        "#{self.site}#{BackchatResource::CONFIG['api']['login_path']}.#{self.format.extension}"
       end
       
     end
