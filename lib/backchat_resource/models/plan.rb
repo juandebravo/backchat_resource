@@ -3,10 +3,6 @@
 module BackchatResource
   module Models
     class Plan < BackchatResource::Base
-      
-      extend Cacheable
-      cache_api_response :duration => :long
-      
       schema do
         string 'name',
                'streams_limit', 

@@ -17,7 +17,7 @@
             "full_uri": "twitter://justinbeiber#timeline"
         }
         ],
-        "api_key": "BRENDA_API_KEY",
+        "api_key": "ddada53db6eb6eed4b4e555883a0acc3",
         "first_name": "Brenda",
         "last_name": "Green",
         "streams": ["http://localhost:8080/1/streams/mojolly-crew"],

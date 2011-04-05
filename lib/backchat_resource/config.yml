@@ -1,6 +1,7 @@
 defaults: &defaults
   api:
     debug: true
+    cache: true
     host: "http://localhost:8080/1/"
     message_channel_path: "channels/"
     message_stream_path: "streams/"

@@ -18,32 +18,36 @@ module ActiveResource
       alias_method :old_request, :request
       # Makes a request to the remote service.
       def request(method, path, *arguments)
-        cache_key = cache_key(method, path, *arguments)
-        
-        user_uri = URI.parse(User.element_path)
-        user_path_regex = Regexp.new(user_uri.path)        
-        login_uri = URI.parse(User.login_path)
-        login_path_regex = Regexp.new(login_uri.path)
+        if (BackchatResource::CONFIG["api"]["cache"] || false)
+          cache_key = cache_key(method, path, *arguments)
+          
+          user_uri = URI.parse(User.element_path)
+          user_path_regex = Regexp.new(user_uri.path)        
+          login_uri = URI.parse(User.login_path)
+          login_path_regex = Regexp.new(login_uri.path)
 
-        if method == :get && !(login_path_regex =~ path || user_path_regex =~ path)
-          if @@cache.cached?(cache_key)
-            # puts "Using cached response for #{cache_key}"
-            return @@cache[cache_key]
-          else
-            # It's not yet cached
-            response = old_request(method, path, *arguments)
-            case response.code.to_i
-              when 200...400
-                puts "Caching response for #{cache_key}"
-                @@cache[cache_key] = response
+          if method == :get && !(login_path_regex =~ path || user_path_regex =~ path)
+            if @@cache.cached?(cache_key)
+              # puts "Using cached response for #{cache_key}"
+              return @@cache[cache_key]
+            else
+              # It's not yet cached
+              response = old_request(method, path, *arguments)
+              case response.code.to_i
+                when 200...400
+                  # puts "Caching response for #{cache_key}"
+                  @@cache[cache_key] = response
+              end
+              return response
             end
-            return response
+          else
+            # If not a get we're modifying data, so remove the cached copy
+            # puts "Deleting cache #{cache_key}" if @@cache.cached?(cache_key)
+            @@cache.delete(cache_key) if @@cache.cached?(cache_key)
+            return old_request(method, path, *arguments)
           end
         else
-          # If not a get we're modifying data, so remove the cached copy
-          # puts "Deleting cache #{cache_key}" if @@cache.cached?(cache_key)
-          @@cache.delete(cache_key) if @@cache.cached?(cache_key)
-          return old_request(method, path, *arguments)
+          old_request(method, path, *arguments)
         end
       end
       
@@ -62,8 +66,8 @@ module ActiveResource
             params += "_#{args}"
           end
         end
-        
-        URI.escape("#{URI.parse(path).path}_#{params}")
+        uri = URI.parse(path)
+        URI.escape("#{uri.path}?#{uri.query}_#{params}")
       end
   end
 end

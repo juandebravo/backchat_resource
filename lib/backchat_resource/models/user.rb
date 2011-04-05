@@ -66,11 +66,10 @@ module BackchatResource
         urls.each do |stream_url|
           # Extract the plan name form the URL: http://localhost:8080/1/stream/slug1 => slug1
           slug = stream_url.split("/").last
-          @streams << Stream.find(slug)          
+          @streams << Stream.find(slug)
         end
       end
       
-      # :nodoc:
       # Ensure it's an array
       def channels
         @channels || []

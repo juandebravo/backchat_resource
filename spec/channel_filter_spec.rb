@@ -11,13 +11,13 @@ describe "ChannelFilter" do
   end
   
   it "has a settable BQL string" do
-    cf = ChannelFilter.new
+    cf = ChannelFilter.new(:uri => "twitter://backchatio#timeline")
     cf.bql = 'text has "something in it"'
     cf.bql.should == 'text has "something in it"'
   end
 
   it "should return nil if there is no BQL set" do
-    cf = ChannelFilter.new
+    cf = ChannelFilter.new(:uri => "twitter://backchatio#timeline")
     cf.bql.should == nil
   end
     
@@ -26,12 +26,6 @@ describe "ChannelFilter" do
     cf.uri.to_s.should == "twitter://backchatio#timeline"
   end
   
-  it "should serialize a built ChannelFilter into a JSON format usable by a stream" do
-    cf = ChannelFilter.build("twitter://backchatio#timeline")
-    expected = "{\"enabled\":false,\"uri\":\"twitter://backchatio#timeline\"}"
-    cf.to_json.should == expected
-  end
-
   it "should be disabled by default" do
     cf = ChannelFilter.build("twitter://backchatio#timeline")
     cf.enabled.should == false
@@ -41,13 +35,16 @@ describe "ChannelFilter" do
   it "has a settable BQL attr that sets the bql querystring in the uri attribute" do
     cf = ChannelFilter.build("twitter://backchatio#timeline")
     cf.bql = 'text has "something"'
-    cf.uri.to_s.should == "twitter://backchatio?bql=text%20has%20%22something%22#timeline"
+    cf.uri.to_s.should == "twitter://backchatio/?bql=text%20has%20%22something%22#timeline"
   end
   
   it "shouldn't wipe other querystirng params when setting another" do
     cf = ChannelFilter.build("twitter://backchatio?other=true#timeline")
     cf.bql = 'text has "something"'
-    cf.uri.to_s.should == "twitter://backchatio?bql=text%20has%20%22something%22&other=true#timeline"
+    
+    keys = cf.uri.querystring_params.keys
+    keys.should include "bql"
+    keys.should include "other"
   end
   
 end

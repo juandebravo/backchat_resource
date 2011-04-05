@@ -57,8 +57,8 @@ describe "Stream" do
             :enabled => true
           },
           {
-            :uri => "twitter://casualjim?bql=text has \"mojolly\" or text has \"backchat \"#timeline\"",
-            :canonical_uri => "twitter://casualjim#timeline",
+            :uri => "twitter://backchatio?bql=text has \"mojolly\" or text has \"backchat \"#timeline\"",
+            :canonical_uri => "twitter://backchatio#timeline",
             :enabled => true
           }
         ]

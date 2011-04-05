@@ -16,30 +16,24 @@ module BackchatResource
       
       # @return [Source]
       def source
-        @source ||= Source.find_for_uri(uri)
+        @source ||= Source.find_for_uri(uri) rescue nil
       end
       
       # The message source-kind refines information of the source by defining a child-item
       # of the source... for instance, Twitter is the source, but Timeline is the kind
       # @return [Kind]
       def kind
-        @kind ||= Kind.find_for_uri(uri)
+        @kind ||= Kind.find_for_uri(uri) rescue nil
       end
       
       # @return [BackchatUri]
       def uri
-        @uri ||= (begin
-          if @attributes["uri"].is_a?(String)
-            BackchatUri.parse(@attributes["uri"])
-          else
-            @attributes["uri"]
-          end
-        end)
+        @uri ||= BackchatUri.parse(@attributes["uri"])
       end
       
       def uri=(uri)
-        @uri = nil # clear cache
         super(uri)
+        @uri = nil # clear cache
       end
       
       # Build a new instance of Channel from a URL
