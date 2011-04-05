@@ -2,7 +2,7 @@ module BackchatResource
   module Models
     # This is not a BackchatResource backed model. It is just a class to store and manipulate 
     # Hash information from the JSON API.
-    class ChannelFilter < BackchatResource::Base      
+    class ChannelFilter < BackchatResource::Base
       schema do 
         string "uri", "canonical_uri", "enabled"
       end
@@ -34,7 +34,7 @@ module BackchatResource
         @bql = bql
         puts uri.inspect
         # (uri['params'] ||={})['bql'] = bql
-        uri.params['bql'] = bql
+        uri.querystring_params['bql'] = bql
         self.uri = uri # store back in the 'uri' attribute
       end
       

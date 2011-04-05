@@ -5,8 +5,9 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 module BackchatResource; DebugEnv="test"; end
 
 require 'rspec'
-require 'fakeweb'
 require 'backchat_resource'
+
+require 'fakeweb'
 require "fakeweb_routes"
 
 include BackchatResource::Models
