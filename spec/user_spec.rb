@@ -5,8 +5,6 @@ describe "User" do
   TEST_USER = "brenda"
   TEST_PASS = "gr33n"
   TEST_FULLNAME = "Brenda Green"
-
-
   TEST_API_KEY = "ddada53db6eb6eed4b4e555883a0acc3"
   
   before(:each) do
