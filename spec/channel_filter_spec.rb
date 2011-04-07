@@ -23,7 +23,7 @@ describe "ChannelFilter" do
     
   it "can be built from a URI" do
     cf = ChannelFilter.build("twitter://backchatio#timeline")
-    cf.uri.to_s.should == "twitter://backchatio#timeline"
+    cf.uri.to_s.should == "twitter://backchatio/#timeline"
   end
   
   it "should be disabled by default" do

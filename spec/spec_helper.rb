@@ -7,8 +7,8 @@ module BackchatResource; DebugEnv="test"; end
 require 'rspec'
 require 'backchat_resource'
 
-require 'fakeweb'
-require "fakeweb_routes"
+# require 'fakeweb'
+# require "fakeweb_routes"
 
 include BackchatResource::Models
 

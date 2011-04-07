@@ -3,6 +3,7 @@ module BackchatResource
     
     self.site   = BackchatResource::CONFIG["api"]["host"]
     self.format = :backchat_json
+    self.timeout = BackchatResource::CONFIG["api"]["timeout"] || 5
     self.include_root_in_json = false
 
     cattr_accessor :api_key

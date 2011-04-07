@@ -42,7 +42,7 @@ module BackchatResource
       def self.build_from_uri(doc)
         uri = nil
         if doc.is_a?(BackchatUri)
-          uri = doc
+          uri = doc.to_s
         elsif doc.is_a?(String)
           uri = doc
         elsif doc.is_a?(Hash)

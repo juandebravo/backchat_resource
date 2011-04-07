@@ -49,7 +49,7 @@ module BackchatResource
       # @note This also sets `slug` to a slug-safe version based on name
       def name=(name)
         super(name)
-        self.slug = name.to_slug
+        self.slug = (name || "").to_slug
       end
       
       # @return [string, nil] The API URL for the stream or nil if there is no slug
