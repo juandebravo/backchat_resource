@@ -3,6 +3,10 @@ require 'backchat_resource/backchat_uri'
 
 describe "BackchatResource::BackchatUri" do
 
+  it "should encode a URI within a URI safely for API calls" do
+    pending
+  end
+
   it "should parse a uri" do
     uri = "twitter://backchatio#timeline"
     result = BackchatUri.parse(uri)

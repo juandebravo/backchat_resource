@@ -7,6 +7,22 @@ module BackchatResource
       
       validates_presence_of :_id, :uri
       
+      def initialize(*params)
+        if params.length == 1
+          if params.is_a?(String)
+            self.uri = params
+          elsif params.is_a?(Channel)
+            self.uri = params.uri
+          elsif params.is_a?(BackchatUri)
+            self.uri = params.to_s
+          else
+            super
+          end
+        else
+          super
+        end
+      end
+      
       # TODO:
       # Access properties on the URI as if they were on the Channel
       # set source [Source,Kind,string]

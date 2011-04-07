@@ -12,14 +12,39 @@ module BackchatResource
       attr_reader :uri, :bql
 
       # Set default values
-      def initialize(options={})
-        super(options)
-        attributes["enabled"] ||= false
-        
-        self.uri = options[:uri] if options.key?(:uri)
-        self.enabled = options[:enabled] if options.key?(:enabled)
-        self.bql = options[:bql] if options.key?(:bql)
+      def initialize(*params)
+        if params.length == 1
+          if params.is_a?(Hash)
+            self.uri = options[:uri] if options.key?(:uri)
+            self.enabled = options[:enabled] if options.key?(:enabled)
+            self.bql = options[:bql] if options.key?(:bql)
+          elsif params.is_a?(String)
+            self.uri = params
+          elsif params.is_a?(Channel)
+            self.uri = params.uri
+            self.bql = params.uri.bql
+            self.enabled = false
+          elsif params.is_a?(BackchatUri)
+            self.uri = params
+            self.bql = params.uri.bql
+            self.enabled = false
+          else
+            super
+          end
+        else
+          super
+        end
+        # attributes["enabled"] ||= false
       end
+      
+      # def initialize(options={})
+      #   super(options)
+      #   attributes["enabled"] ||= false
+      #   
+      #   self.uri = options[:uri] if options.key?(:uri)
+      #   self.enabled = options[:enabled] if options.key?(:enabled)
+      #   self.bql = options[:bql] if options.key?(:bql)
+      # end
       
       def uri
         @uri ||= BackchatUri.parse(@attributes["uri"])
