@@ -13,7 +13,7 @@ module ActiveResource
       
       # Encode into URL encoded string
       def encode(hash, options = {})
-        hash.to_query
+        hash.to_json
       end
       
       def decode(json)

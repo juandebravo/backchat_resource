@@ -2,6 +2,7 @@ defaults: &defaults
   api:
     debug: true
     cache: true
+    timeout: 2
     host: "http://localhost:8080/1/"
     message_channel_path: "channels/"
     message_stream_path: "streams/"

@@ -42,6 +42,12 @@ module BackchatResource
       def self.human_attribute_name(params, options={})
         HUMANIZED_ATTRIBUTES[params.to_sym] || super(params, options)
       end
+      
+      # Save nested model instances back to the API
+      def after_save(model)
+        # TODO: Save Streams
+        # Save channels
+      end
 
       def id
         @attributes["login"] || nil
