@@ -2,14 +2,9 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "User" do
 
-  TEST_USER = "adam"
-  TEST_PASS = "postage"
-  TEST_FULLNAME = "Adam Burmister"
-  # TEST_USER = "brenda"
-  # TEST_PASS = "gr33n"
-  # TEST_FULLNAME = "Brenda Green"
-
-
+  TEST_USER = "brenda"
+  TEST_PASS = "gr33n"
+  TEST_FULLNAME = "Brenda Green"
   TEST_API_KEY = "ddada53db6eb6eed4b4e555883a0acc3"
   
   before(:each) do
