@@ -1,6 +1,6 @@
 source "http://rubygems.org"
 
-gem "activeresource"#, ">= 3.0.4"
+gem "activeresource"#, ">= 3.0.6"
 gem "unidecode"
 gem "addressable"
 gem "reactive_resource", :git => "git://github.com/justinweiss/reactive_resource.git"

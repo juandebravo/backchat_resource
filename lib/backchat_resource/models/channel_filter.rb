@@ -46,6 +46,23 @@ module BackchatResource
       #   self.bql = options[:bql] if options.key?(:bql)
       # end
       
+      def enabled
+        @attributes["enabled"]
+      end
+      
+      # def enabled=(val)
+      #   @attributes["enabled"] = val
+      # end
+      
+      def canonical_uri
+        @canonical_uri ||= BackchatUri.parse(@attributes["canonical_uri"])
+      end
+      
+      def canonical_uri=(val)
+        @attributes["canonical_uri"] = uri.to_s
+        @canonical_uri = nil
+      end
+      
       def uri
         @uri ||= BackchatUri.parse(@attributes["uri"])
       end
@@ -63,11 +80,9 @@ module BackchatResource
       
       # @param [string] BQL query to filter against the Channel
       def bql=(bql)
-        # @bql = bql
-        # puts uri.inspect
-        # (uri['params'] ||={})['bql'] = bql
-        uri.bql = bql
-        self.uri = uri # store back in the 'uri' attribute
+        self.uri.bql = bql
+        @attributes["uri"] = uri.to_s
+        @uri = nil
       end
       
       # Build a new instance of a ChannelFilter based on the input BackChat.io URI, or Hash

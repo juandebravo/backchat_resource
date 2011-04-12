@@ -5,16 +5,13 @@
         "_id": "4d639aeab4ac7e1d8700000b",
         "channels": [
         {
-            "bare_uri": "twitter://backchatio",
-            "full_uri": "twitter://backchatio#timeline"
+            "uri": "twitter://backchatio#timeline"
         },
         {
-            "bare_uri": "smtp://brenda.bieber-fever",
-            "full_uri": "smtp://brenda.bieber-fever#smtp"
+            "uri": "smtp://brenda.bieber-fever#smtp"
         },
         {
-            "bare_uri": "twitter://justinbeiber",
-            "full_uri": "twitter://justinbeiber#timeline"
+            "uri": "twitter://justinbeiber#timeline"
         }
         ],
         "api_key": "ddada53db6eb6eed4b4e555883a0acc3",

@@ -8,7 +8,7 @@ module ActiveResource
       end
       
       def mime_type
-        'application/x-www-form-urlencoded'
+        'application/json'
       end
       
       # Encode into URL encoded string

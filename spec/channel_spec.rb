@@ -26,8 +26,7 @@ describe "Channel" do
   
   it "can build an instance from an API JSON response hash" do
     from_api = {
-      "bare_uri" => "twitter://thestartupbus",
-      "full_uri" => "twitter://thestartupbus#timeline"
+      "uri" => "twitter://thestartupbus#timeline"
     }
     ch = Channel.build_from_uri(from_api)
     ch.should be_instance_of Channel

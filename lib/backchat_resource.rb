@@ -34,6 +34,7 @@ module BackchatResource
 end
 
 require 'backchat_resource/string_extensions'
+require 'backchat_resource/addressable'
 require 'backchat_resource/backchat_json_format'
 require 'backchat_resource/exceptions'
 require 'backchat_resource/backchat_uri'

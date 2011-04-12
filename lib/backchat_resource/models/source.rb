@@ -20,7 +20,7 @@ module BackchatResource
       end
       
       def id
-        @id ||= _id.downcase
+        @id ||= attributes['_id'].downcase
       end
       
       def kinds
@@ -41,17 +41,47 @@ module BackchatResource
         @kinds = knds
       end
       
+      # @return [Kind] a default Kind for this source
+      def default_kind
+        default_kind_id = @attributes["default_kind"].downcase
+        kinds.each do |knd|
+          return knd if (knd.id == default_kind_id)
+        end
+        nil
+      end
+      
       # @return [Array<Source>]
       def self.all
         @@cached_sources ||= super
       end
       
+      def find_kind_by_id(id)
+        id = id.downcase
+        kinds.each do |knd|
+          return knd if (knd.id == id)
+        end
+        nil
+      end
+      
       # Find a `Source` that would match the passed `URI`
       # @param [string, BackchatUri]
       def self.find_for_uri(uri)
-        scheme = uri.to_s.gsub(/:\/\/.*$/,'')
-        response = BackchatResource::Base.connection.get("#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['expand_source_path']}#{scheme}", BackchatResource::Base.headers)
-        new(response['data'])
+        scheme = ""
+        begin
+          uri_s = uri.to_s
+          scheme = uri_s.gsub(/:\/\/.*$/,'')
+        rescue
+          return nil
+        end
+        
+        raise "Can't find a source for #{uri}" if scheme.blank?
+
+        begin
+          response = BackchatResource::Base.connection.get("#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['expand_source_path']}#{scheme}", BackchatResource::Base.headers)
+          Source.new(response['data'])
+        rescue
+          nil
+        end
       end
       
     end
@@ -80,7 +110,7 @@ module BackchatResource
       end
        
       def id
-        @attributes["_id"].downcase
+        self._id.downcase
       end
 
       def _id
@@ -162,22 +192,35 @@ module BackchatResource
       
       # @return [Kind,nil] a Kind that matches the URL structure given as input
       def self.find_for_uri(uri)        
-        # Input is something like "twitter://#timeline"
-        frag_kind = Addressable::URI.parse(uri.to_s).fragment.downcase
-        # frag_kind = URI.parse(uri).fragment.downcase
-        src = Source.find_for_uri(uri)
-        kind = nil
+        bcuri = BackchatUri.parse(uri)
+        puts "*"*20 + bcuri.kind.id.inspect
+        return bcuri.kind
         
-        return nil if src.nil? || src.kinds.blank?
-        
-        if frag_kind
-          src.kinds.select { |knd| knd.id == frag_kind }.first
-        end
-        if kind.nil?
-          src.kinds.select { |knd| knd.id == src.default_kind.downcase }.first
-        end
+        # #----------------------------------------------------
+        # 
+        # 
+        # # Input is something like "twitter://#timeline"
+        # # puts "kind::find_for_uri #{uri}"
+        # src = Source.find_for_uri(uri)
+        # # puts "src = #{src.inspect}"
+        # frag_kind = Addressable::URI.parse(uri.to_s).fragment.downcase rescue nil
+        # puts "frag_kind = #{frag_kind}"
+        # kind = nil
+        # 
+        # if frag_kind
+        #   return src.kinds.select { |knd| knd.id == frag_kind }.first
+        # end
+        # puts "no kind found"
+        # nil
+        # # if kind.nil?
+        # #   default_kind_id = src.default_kind.downcase
+        # #   src.kinds.each do |knd|
+        # #     return knd if (knd.id == default_kind_id)
+        # #   end
+        # # end
+        # # 
+        # # return (src.kinds.first || nil)
       end
-      
     end
   end
 end

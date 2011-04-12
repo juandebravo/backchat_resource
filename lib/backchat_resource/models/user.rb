@@ -29,7 +29,7 @@ module BackchatResource
       
       has_many :streams
       has_many :channels
-      has_one "plan"
+      has_one :plan
       
       validates_presence_of :login
       validates_format_of :login, :with => /^\w+$/, :message => "can only contain letters, digits and underscores"
@@ -43,10 +43,21 @@ module BackchatResource
         HUMANIZED_ATTRIBUTES[params.to_sym] || super(params, options)
       end
       
+      # Customise the JSON shape
+      def to_json(options={})
+        json = super({ :only => ["first_name", "last_name", "email"] }.merge(options))
+        save_nested_models
+        return json
+      end
+      
       # Save nested model instances back to the API
-      def after_save(model)
-        # TODO: Save Streams
-        # Save channels
+      def save_nested_models
+        streams.each do |strm|
+          strm.save if strm.changed?
+        end
+        channels.each do |ch|
+          ch.save if ch.changed?
+        end
       end
 
       def id
@@ -77,9 +88,9 @@ module BackchatResource
       end
       
       # Ensure it's an array
-      def channels
-        @channels || []
-      end
+      # def channels
+      #   @channels || []
+      # end
 
       # Set the `channels` attribute to an array of Channel models from the input URLs
       # @param [Array<Hash>] URLs of channels
@@ -165,7 +176,7 @@ module BackchatResource
               :username => username,
               :password => password
             }
-            response = connection.post(self.login_path, payload.to_query)
+            response = connection.post(self.login_path, payload.to_json)
             body = JSON.parse(response.body)
             if body["data"]["api_key"]
               BackchatResource::Base.api_key = body["data"]["api_key"]

@@ -1,5 +1,6 @@
 module BackchatResource                
   class Base < ReactiveResource::Base
+    # include ActiveModel::Dirty
     
     self.site   = BackchatResource::CONFIG["api"]["host"]
     self.format = :backchat_json
@@ -8,13 +9,24 @@ module BackchatResource
 
     cattr_accessor :api_key
     
+    # def encode(options={})
+    #   self.class.format.encode(attributes, options)
+    # end
     def encode(options={})
-      self.class.format.encode(attributes, options)
+      send("to_#{self.class.format.extension}", options)
     end
-    
+        
     # Keep track of BackChat.io API's raised server errors
     def server_errors
       @server_errors ||= ActiveModel::Errors.new(self)
+    end
+    
+    # Builds a new, unsaved record using the schema.
+    def build(attributes = {})
+      # attrs = self.format.decode(connection.get("#{new_element_path}").body).merge(attributes)
+      attrs = self.schema
+      raise attrs.inspect
+      self.new(attrs)
     end
         
     # https://github.com/rails/rails/blob/master/activeresource/lib/active_resource/base.rb#L1235

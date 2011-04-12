@@ -12,10 +12,30 @@ module BackchatResource
         string 'channel_filters'
       end
       
-      has_many :channel_filters
       belongs_to :user
       
-      validates_presence_of :_id, :slug, :name
+      validates_presence_of :slug, :name
+      
+      # 
+      def serializable_hash(options = nil)
+        cfs = []
+        (channel_filters.is_a?(Array) ? channel_filters : [channel_filters]).each { |cf|
+          cfs << {
+            "uri" => cf.uri.to_s,
+            "canonical_uri" => cf.canonical_uri.to_s,
+            "bql" => cf.bql,
+            "enabled" => cf.enabled
+          }
+        }
+        
+        {
+          "_id" => self._id,
+          "name" => self.name,
+          "slug" => self.slug,
+          "description" => self.description,
+          "channel_filters" => cfs
+        }
+       end
       
       # Return an empty array
       # @return [Array<ChannelFilter>]
@@ -25,30 +45,30 @@ module BackchatResource
       
       # Set from an array of items
       # @param [Array<ChannelFilter>, Array<Hash>] new contents of channel_filters array
-      def channel_filters=(params)
-        params = [params] unless params.is_a?(Array)
+      def channel_filters=(val)
+        val = [val] unless val.is_a?(Array)
         cfs = []
-        params.each do |cf|
+        val.each do |cf|
           if cf.is_a?(ChannelFilter)
             cfs << cf
           else
             cfs << ChannelFilter.new(cf)
           end
         end
-        @channel_filters = cfs
+        @attributes["channel_filters"] = cfs
       end
       
       # The ID of a stream for the API URL is it's slug
       # @return [string] stream slug
       def id
-        slug
+        slug || nil
       end
 
       # Set the name of the stream and generate a new slug based on it
       # @param [string] name of the stream
       # @note This also sets `slug` to a slug-safe version based on name
       def name=(name)
-        super(name)
+        super
         self.slug = (name || "").to_slug
       end
       
