@@ -6,6 +6,7 @@ defaults: &defaults
     host: "http://localhost:8080/1/"
     message_channel_path: "channels/"
     message_stream_path: "streams/"
+    for_channel_path: "for_channel"
     message_sources_path: "sources/"
     message_source_path: "source/"
     user_path: ""

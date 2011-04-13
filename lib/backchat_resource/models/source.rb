@@ -193,7 +193,6 @@ module BackchatResource
       # @return [Kind,nil] a Kind that matches the URL structure given as input
       def self.find_for_uri(uri)        
         bcuri = BackchatUri.parse(uri)
-        puts "*"*20 + bcuri.kind.id.inspect
         return bcuri.kind
         
         # #----------------------------------------------------

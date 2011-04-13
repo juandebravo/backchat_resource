@@ -73,6 +73,7 @@ module BackchatResource
     def source=(val)
       attributes['source'] = val.to_s
       @source = nil # clear cache
+      @uri_s = nil # clear cache
     end
     
     # Read only
@@ -84,6 +85,7 @@ module BackchatResource
     def kind=(val)
       attributes['kind'] = val.to_s
       @kind = nil # clear cache
+      @uri_s = nil # clear cache
     end
     
     # Uhhh... it provides some extra info for odd use cases. Rarely used.
@@ -96,13 +98,13 @@ module BackchatResource
     # @param [String] Set the resource kind for this URI
     def kind_resource=(val)
       attributes['kind_resource'] = val
-      # recompose_uri
+      @uri_s = nil # clear cache
     end
     
     # @return [Hash] Any querystring parameters for this URI
     def querystring_params
+      @uri_s = nil # clear cache
       attributes['params'] ||= {}
-      # recompose_uri
     end
     
     # The target of a BackChat URI varies on context. In a twitter channel the target is
@@ -115,7 +117,7 @@ module BackchatResource
     # @param [String] new target for this BackChat URI
     def target=(val)
       attributes['target'] = val
-      # recompose_uri
+      @uri_s = nil # clear cache
     end
     
     def bql
@@ -125,7 +127,16 @@ module BackchatResource
     def bql=(val)
       attributes["params"] = {} if !attributes["params"]
       attributes["params"]["bql"] = val
-      # recompose_uri
+      @uri_s = nil # clear cache
+    end
+    
+    def canonical_uri
+      attributes["canonical_uri"]
+    end
+    
+    def canonical_uri=(val)
+      attributes["canonical_uri"] = val
+      @uri_s = nil # clear cache
     end
     
     # Returns the URI in the canonical form. Canonical has everything but credentials
@@ -138,7 +149,7 @@ module BackchatResource
     end
     
     def to_s(escape = false)
-      to_canonical_s(escape)
+      @uri_s ||= to_canonical_s(escape)
     end
     
     # Parse a URI string into a BackchatUri
@@ -190,39 +201,56 @@ module BackchatResource
     
     # Refresh a URI with the API expand URI endpoint, updating the URI @attributes state
     def recompose_uri
+      # puts "*"*100
+      # puts "ATTRIBUTES:: " + attributes.inspect
+      
       payload = {
         :original_uri => attributes['canonical_uri'] || @uri_s,
         :target => attributes['target'],
-        :params => querystring_params,
+        # :params => querystring_params,
         :kind_resource => attributes['kind_resource'],
         # :source => (attributes['source'] || {})['_id'],
         # :kind => (attributes['kind'] || {})['_id']
       }
+      # Copy querystring params into the payload at the root
+      querystring_params.each do |k,v|
+        if payload.key?(k.to_sym) == false
+          payload[k.to_sym] = v
+        end
+      end
+      # Set source
       if attributes['source'].is_a?(Hash)
         payload[:source] = attributes['source']['_id']
       else
         payload[:source] = attributes['source']
       end
+      # Set kind
       if attributes['kind'].is_a?(Hash)
         payload[:kind] = attributes['kind']['_id']
       else
         payload[:kind] = attributes['kind']
       end
       
+      # puts "PAYLOAD:: " + payload.inspect
+      
       payload.delete_if {|key, value| value.blank? }
-      if payload.blank? || !(payload.keys.include?(:source) && payload.keys.include?(:target))
-        puts "recompose_uri:: Payload would be empty. #{@uri_s.inspect} #{attributes.inspect}"
+      if payload.blank? #|| !(payload.keys.include?(:source) && payload.keys.include?(:target))
+        puts "recompose_uri:: Payload would be empty. #{attributes.inspect}"
         return nil
       end
+      # puts "^"*100
       
       # begin
         response = BackchatResource::Base.connection.get(BackchatUri.compose_uri_uri(payload), BackchatResource::Base.headers)
         data = response['data']
         if data.is_a?(Array)
-          attributes = data.last # ["key",{data}]
+          @attributes = data.last # ["key",{data}]
         else
-          attributes = data
+          @attributes = data
         end
+        
+        # puts @attributes.inspect
+        
       # rescue
       #   puts ("Could not recompose URI for #{payload.to_json}")
       # end

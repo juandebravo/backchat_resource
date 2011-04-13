@@ -16,24 +16,34 @@ module BackchatResource
       
       validates_presence_of :slug, :name
       
+      # The ID of a stream for the API URL is it's slug
+      # @return [string] stream slug
+      def id
+        return nil if self.slug.blank?
+        self.slug
+      end
+      
       # 
       def serializable_hash(options = nil)
-        cfs = []
-        (channel_filters.is_a?(Array) ? channel_filters : [channel_filters]).each { |cf|
-          cfs << {
-            "uri" => cf.uri.to_s,
-            "canonical_uri" => cf.canonical_uri.to_s,
-            "bql" => cf.bql,
-            "enabled" => cf.enabled
-          }
-        }
+        # cfs = []
+        # (channel_filters.is_a?(Array) ? channel_filters : [channel_filters]).each { |cf|
+        #   cfs << {
+        #     "channel" => cf.uri.to_s(true),
+        #     "enabled" => cf.enabled
+        #   }
+        # }
         
         {
           "_id" => self._id,
           "name" => self.name,
           "slug" => self.slug,
           "description" => self.description,
-          "channel_filters" => cfs
+          "filters" => (channel_filters.is_a?(Array) ? channel_filters : [channel_filters]).inject([]) { |col, cf|
+            col << {
+              "channel" => cf.uri.to_s(true),
+              "enabled" => cf.enabled
+            }
+          }
         }
        end
       
@@ -57,12 +67,6 @@ module BackchatResource
         end
         @attributes["channel_filters"] = cfs
       end
-      
-      # The ID of a stream for the API URL is it's slug
-      # @return [string] stream slug
-      def id
-        slug || nil
-      end
 
       # Set the name of the stream and generate a new slug based on it
       # @param [string] name of the stream
@@ -76,6 +80,13 @@ module BackchatResource
       def api_url
         return nil if slug.blank?
         "#{self.class.site}#{BackchatResource::CONFIG['api']['message_stream_path']}#{slug}.#{self.class.format.extension}"
+      end
+      
+      # Find streams using a channel
+      # @return [Array<Stream>,nil]
+      def self.find_streams_using_channel(ch)
+        # /streams/for_channel
+        []
       end
       
     end

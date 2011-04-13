@@ -5,9 +5,6 @@ module BackchatResource
       # Flag as a singleton resource so we don't pluralise URL paths (user -> users)
       singleton
       
-      # The schema doesn't seem to be setting up attribute readers for us
-      # attr_accessor :login, :password, :first_name, :last_name, :email
-      
       schema do
         string '_id',
                'email',
@@ -199,21 +196,19 @@ module BackchatResource
         # TODO: What does a fail/success raise that we can return?
       end
 
-      #
-      # On user.save we need to 
-      # - save the Streams objects to a different end point
-      # - upgrade the Plan if it's changed
-      # 
-      def create
-        # TODO
-        super
-      end
-      def update
-        # TODO
-        super
-      end
-      
-      #protected
+      # #
+      # # On user.save we need to 
+      # # - save the Streams objects to a different end point
+      # # - upgrade the Plan if it's changed
+      # # 
+      # def create
+      #   # TODO
+      #   super
+      # end
+      # def update
+      #   # TODO
+      #   super
+      # end
       
       # Override the element path to match the BackChat.io API structure - the root is the user element
       # https://api.backchat.io/{API_VERS}/
