@@ -27,20 +27,7 @@ module BackchatResource
           end
         end
       end
-      
-      def serializable_hash(options = nil)
-        # puts "          :old_channel => self.old_channel.to_s(true), #{@old_uri.inspect}"
-        puts "Serializing channel " + self.uri.attributes.inspect# + ", \n" + self.uri.to_s # + ", \n" + self.uri.attributes.inspect
-        
-        old_channel_uri = @old_uri.to_s
-        new_channel_uri = uri.to_s
-        
-        {
-          :channel => new_channel_uri,
-          :old_channel => (old_channel_uri.blank? ? nil : old_channel_uri)
-        }
-       end
-      
+
       # Make a unique ID for this channel
       def id
         Digest::MD5.hexdigest(uri.to_s) rescue nil
@@ -106,11 +93,6 @@ module BackchatResource
       #   uri.to_s
       # end
       
-      # Override the destroy method as we need to do some custom param passing to make this work with the current API design.
-      def destroy
-        
-      end
-      
       # Build a new instance of Channel from a URL
       # @param [BackchatUri, string, Hash]
       # @return [Channel]
@@ -129,6 +111,39 @@ module BackchatResource
         end
         (self.get_channel_class(uri)).new(:uri => uri)
       end
+
+      # Customise the saving/loading from API ===================================================
+      
+      def serializable_hash(options = nil)
+        puts "Serializing channel " + self.uri.attributes.inspect
+        curr_channel_uri = uri.to_s
+        
+        serialize_for = (options[:serializable_hash_for] rescue nil)
+        
+        case serialize_for
+        when :update
+          old_channel_uri = @old_uri.to_s
+          {
+            :channel => curr_channel_uri,
+            :old_channel => (old_channel_uri.blank? ? nil : old_channel_uri)
+          }
+        else
+          {
+            :channel => curr_channel_uri
+          }
+        end
+       end
+       
+       def update
+         connection.put(element_path(prefix_options), encode(:serializable_hash_for => :update), self.class.headers).tap do |response|
+           load_attributes_from_response(response)
+         end
+       end
+
+       # Override the destroy method as we need to do some custom param passing to make this work with the current API design.
+       def destroy
+         connection.delete(element_path({:channel => self.uri.to_s, :force => true}), self.class.headers)
+       end
 
       def self.element_path(id, prefix_options = {}, query_options = nil)
         prefix_options, query_options = split_options(prefix_options) if query_options.nil?

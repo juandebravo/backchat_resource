@@ -14,7 +14,7 @@ module BackchatResource
       'source' => nil,
       'kind' => nil,
       'kind_resource' => nil,
-      'params' => {},
+      'params' => HashWithIndifferentAccess.new,
       'target' => nil,
       'bql' => nil,
       'canonical_uri' => nil,
@@ -55,7 +55,7 @@ module BackchatResource
           'source' => nil,
           'kind' => nil,
           'kind_resource' => nil,
-          'params' => {},
+          'params' => HashWithIndifferentAccess.new,
           'target' => nil,
           'bql' => nil,
           'canonical_uri' => nil,
@@ -104,7 +104,7 @@ module BackchatResource
     # @return [Hash] Any querystring parameters for this URI
     def querystring_params
       @uri_s = nil # clear cache
-      attributes['params'] ||= {}
+      attributes['params'] ||= HashWithIndifferentAccess.new
     end
     
     # The target of a BackChat URI varies on context. In a twitter channel the target is
@@ -125,7 +125,7 @@ module BackchatResource
     end
     
     def bql=(val)
-      attributes["params"] = {} if !attributes["params"]
+      attributes["params"] = HashWithIndifferentAccess.new if !attributes["params"]
       attributes["params"]["bql"] = val
       @uri_s = nil # clear cache
     end
@@ -185,7 +185,7 @@ module BackchatResource
           end
         rescue
           puts "Error expanding URI #{uri_s}"
-          attributes ||= {}
+          attributes ||= HashWithIndifferentAccess.new
         end
       end
     end
@@ -205,7 +205,7 @@ module BackchatResource
       # puts "ATTRIBUTES:: " + attributes.inspect
       
       payload = {
-        :original_uri => attributes['canonical_uri'] || @uri_s,
+        :original_channel => attributes['canonical_uri'] || @uri_s,
         :target => attributes['target'],
         # :params => querystring_params,
         :kind_resource => attributes['kind_resource'],
@@ -234,7 +234,7 @@ module BackchatResource
       # puts "PAYLOAD:: " + payload.inspect
       
       payload.delete_if {|key, value| value.blank? }
-      if payload.blank? #|| !(payload.keys.include?(:source) && payload.keys.include?(:target))
+      if payload.blank? || !(payload.keys.include?(:source) && payload.keys.include?(:target))
         puts "recompose_uri:: Payload would be empty. #{attributes.inspect}"
         return nil
       end
@@ -261,24 +261,13 @@ module BackchatResource
       # end
     end
     
-    # # Base64 encode a string in a URL safe format
-    # # @params String 
-    # def self.encode_b64_urlsafe(s)
-    #   encoded = [s].pack('m').tr('+/','-_').gsub("\n",'')
-    # end
-    # 
-    # # Base64 decode a string in a URL safe format
-    # # @params String base64-urlsafe encoded string to decode
-    # def self.encode_b64_urlsafe(s)
-    #   decoded = s.tr('-_','+/').unpack('m')[0]
-    # end
-    
     protected
     
     # @param [Hash] querystring params
     # @return [String] URI to the compose URI endpoint
     def self.compose_uri_uri(params)
-      "#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['compose_uri_path']}?#{params.to_query}"
+      qs = params.to_query#.gsub!('[]','') # Backend expects arrays to be multiple values 'name=foo&name=bar', not 'name[]'
+      "#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['compose_uri_path']}?#{qs}"
     end
     
     # @param [String] URI to expand

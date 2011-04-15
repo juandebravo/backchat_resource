@@ -9,6 +9,15 @@ module BackchatResource
 
     cattr_accessor :api_key
     
+    # Some of our resources don't have IDs, so this allows us to mark them as new/existing for PUT/POST methods
+    @is_new_record = false
+    def new?
+      @is_new_record || id.nil?
+    end
+    def is_new=(val)
+      @is_new_record = val
+    end
+    
     # def encode(options={})
     #   self.class.format.encode(attributes, options)
     # end

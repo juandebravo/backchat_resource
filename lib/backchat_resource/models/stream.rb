@@ -23,25 +23,20 @@ module BackchatResource
         self.slug
       end
       
+      def slug
+        @attributes['slug']
+      end
+      
       # 
       def serializable_hash(options = nil)
-        # cfs = []
-        # (channel_filters.is_a?(Array) ? channel_filters : [channel_filters]).each { |cf|
-        #   cfs << {
-        #     "channel" => cf.uri.to_s(true),
-        #     "enabled" => cf.enabled
-        #   }
-        # }
-        
         {
-          "_id" => self._id,
-          "name" => self.name,
-          "slug" => self.slug,
-          "description" => self.description,
+          "name" => name,
+          "slug" => slug,
+          "description" => description,
           "filters" => (channel_filters.is_a?(Array) ? channel_filters : [channel_filters]).inject([]) { |col, cf|
             col << {
               "channel" => cf.uri.to_s(true),
-              "enabled" => cf.enabled
+              "enabled" => cf.enabled?
             }
           }
         }
@@ -67,6 +62,14 @@ module BackchatResource
         end
         @attributes["channel_filters"] = cfs
       end
+      
+      def description
+        @attributes["description"] || ""
+      end
+
+      def name
+        @attributes["name"]
+      end
 
       # Set the name of the stream and generate a new slug based on it
       # @param [string] name of the stream
@@ -86,6 +89,7 @@ module BackchatResource
       # @return [Array<Stream>,nil]
       def self.find_streams_using_channel(ch)
         # /streams/for_channel
+        # TODO!
         []
       end
       

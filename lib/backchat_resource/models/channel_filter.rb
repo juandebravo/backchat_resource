@@ -16,8 +16,8 @@ module BackchatResource
         if params.length == 1
           if params.is_a?(Hash)
             self.uri = options[:uri] if options.key?(:uri)
-            self.enabled = options[:enabled] if options.key?(:enabled)
             self.bql = options[:bql] if options.key?(:bql)
+            self.enabled = options[:enabled] if options.key?(:enabled)
           elsif params.is_a?(String)
             self.uri = params
           elsif params.is_a?(Channel)
@@ -34,7 +34,6 @@ module BackchatResource
         else
           super
         end
-        # attributes["enabled"] ||= false
       end
       
       # def initialize(options={})
@@ -49,6 +48,7 @@ module BackchatResource
       def enabled
         @attributes["enabled"]
       end
+      alias_method :enabled?, :enabled
       
       # def enabled=(val)
       #   @attributes["enabled"] = val
@@ -70,18 +70,24 @@ module BackchatResource
       # The URI describes the channel filter
       # @param {String|BackchatUri} URI for the channel filter
       def uri=(uri)
+        puts "I JUST SET THE URI= #{uri.inspect}"
+        puts caller.first.inspect
         @attributes["uri"] = uri.to_s
-        @uri = nil # clear cache
+        @uri = @canonical_uri = nil # clear cache
       end
       
       def bql
-        uri.bql
+        # puts "b"*100 + @attributes["bql"] + "\n" + uri.inspect
+        # uri.bql
+        @attributes["bql"]
       end
       
       # @param [string] BQL query to filter against the Channel
-      def bql=(bql)
-        self.uri.bql = bql
+      def bql=(val)
+        self.uri.bql = val
         @attributes["uri"] = uri.to_s
+        puts "I JUST SET THE URI BQL PARAM: #{self.uri.bql}, #{self.uri.to_s}"
+        @attributes["bql"] = val
         @uri = nil
       end
       

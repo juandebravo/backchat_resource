@@ -9,8 +9,8 @@ module BackchatResource
         string '_id', 
                'category', 
                'default_auth_kind', 
-               'default_bare_uri_template', 
-               'default_canonical_uri_template', 
+               # 'default_bare_uri_template', 
+               # 'default_canonical_uri_template', 
                'default_kind', 
                'display_name', 
                'enabled'
