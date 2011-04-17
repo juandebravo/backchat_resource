@@ -11,13 +11,17 @@ module BackchatResource
         end
 
         validate :must_be_url
-        # 
-        # def target=(url)
-        #   super(url.gsub("http://",""))
-        # end
+
+        # Ensure the URI includes HTTP
+        def target=(url)
+          if url.match(/^https?:/)
+            super
+          else
+            super("http://#{url}")
+          end
+        end
                   
         def must_be_url
-          # puts 'v' * 100
           begin
             Addressable::URI.parse(self.target)
           rescue

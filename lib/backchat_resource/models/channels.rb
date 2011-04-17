@@ -6,6 +6,7 @@ module BackchatResource
       autoload :Webfeed, 'backchat_resource/models/channels/webfeed'
       autoload :EmailDropbox, 'backchat_resource/models/channels/email_dropbox'
       autoload :TwitterTimeline, 'backchat_resource/models/channels/twitter_timeline'
+      autoload :TwitterAccount, 'backchat_resource/models/channels/twitter_account'
     end
   end
 end

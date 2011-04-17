@@ -43,8 +43,12 @@ module BackchatResource
       # Customise the JSON shape
       def to_json(options={})
         json = super({ :only => ["first_name", "last_name", "email"] }.merge(options))
-        save_nested_models
         return json
+      end
+      
+      def save
+        save_nested_models
+        super
       end
       
       # Save nested model instances back to the API
@@ -55,6 +59,7 @@ module BackchatResource
         channels.each do |ch|
           ch.save if ch.changed?
         end
+        change_billing_plan!(plan) if cf.changed?(:plan)
       end
 
       def id
@@ -145,6 +150,28 @@ module BackchatResource
         results
       end
       
+      def find_channel_for_uri(uri)
+        uri = BackchatUri.parse(uri) if uri.is_a?(String)
+        uri_s = uri.to_s
+        self.channels.each do |ch|
+          puts '*'*100
+          puts ch.uri.attributes.inspect
+          puts uri.attributes.inspect
+          puts ch.uri.attributes["source"]["_id"] + " == " + uri.attributes["source"]["_id"]
+          puts ch.uri.attributes["kind"]["_id"] + " == " + uri.attributes["kind"]["_id"]
+          puts ch.uri.attributes["target"] + " == " + uri.attributes["target"]
+          puts '^'*100
+          # puts "Comparing #{uri.source.id}, #{uri.kind.id}, #{uri.target}"
+          if ch.uri.attributes["source"]["_id"] == uri.attributes["source"]["_id"] && 
+             ch.uri.attributes["kind"]["_id"] == uri.attributes["kind"]["_id"] && 
+             ch.uri.attributes["target"] == uri.attributes["target"]
+           puts "MATCHED #{ch.uri.inspect}"
+            return ch if ch.uri.to_s == uri_s
+          end
+        end
+        nil
+      end
+      
       # Ask the API to generate a 32 char random API key for the current user
       # return [User]
       def generate_random_api_key!
@@ -156,6 +183,11 @@ module BackchatResource
         self.class.api_key = api_key
         BackchatResource::Base.api_key = api_key
         User.new(body)
+      end
+      
+      # Ask the API to change the billing plan for the current user
+      def change_billing_plan!(new_plan)
+        
       end
       
       # Authenticate a user and set the API key on BackchatResource::Base to the authenticated user

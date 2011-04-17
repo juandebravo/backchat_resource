@@ -175,7 +175,7 @@ module BackchatResource
           'canonical_uri' => nil,
         }
       else
-        begin
+        # begin
           response = BackchatResource::Base.connection.get(expand_uri_uri(uri_s), BackchatResource::Base.headers)
           data = response['data'].first
           if data.is_a?(Array)
@@ -183,10 +183,10 @@ module BackchatResource
           else
             return data
           end
-        rescue
-          puts "Error expanding URI #{uri_s}"
-          attributes ||= HashWithIndifferentAccess.new
-        end
+        # rescue
+        #   puts "Error expanding URI #{uri_s}"
+        #   attributes ||= HashWithIndifferentAccess.new
+        # end
       end
     end
     

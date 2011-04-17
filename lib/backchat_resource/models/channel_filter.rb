@@ -64,29 +64,41 @@ module BackchatResource
       end
       
       def uri
-        @uri ||= BackchatUri.parse(@attributes["uri"])
+        @uri ||= begin
+          BackchatUri.parse(@attributes["uri"])
+        rescue => e
+          # puts "*"*100
+          # puts e.inspect
+          BackchatUri.new
+        end
       end
       
       # The URI describes the channel filter
       # @param {String|BackchatUri} URI for the channel filter
       def uri=(uri)
-        puts "I JUST SET THE URI= #{uri.inspect}"
-        puts caller.first.inspect
+        # puts "I JUST SET THE URI= #{uri.inspect}"
+        # puts caller.first.inspect
         @attributes["uri"] = uri.to_s
+        
+        begin
+          bc_uri = BackchatUri.parse(@attributes["uri"])
+          bql = bc_uri.bql
+        rescue
+        end
         @uri = @canonical_uri = nil # clear cache
       end
       
       def bql
         # puts "b"*100 + @attributes["bql"] + "\n" + uri.inspect
-        # uri.bql
-        @attributes["bql"]
+        uri.bql
+        # @attributes["uri"].bql rescue nil
       end
       
       # @param [string] BQL query to filter against the Channel
       def bql=(val)
         self.uri.bql = val
         @attributes["uri"] = uri.to_s
-        puts "I JUST SET THE URI BQL PARAM: #{self.uri.bql}, #{self.uri.to_s}"
+        # puts "I JUST SET THE URI BQL PARAM: #{self.uri.bql}, #{self.uri.to_s}"
         @attributes["bql"] = val
         @uri = nil
       end
