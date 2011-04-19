@@ -1,3 +1,57 @@
+require 'active_resource/exceptions'
+
+module ActiveResource
+  # Active Resource validation is reported to and from this object, which is used by Base#save
+  # to determine whether the object in a valid state to be saved. See usage example in Validations.
+  class Errors < ActiveModel::Errors
+    # Grabs errors from an array of messages (like ActiveRecord::Validations)
+    # The second parameter directs the errors cache to be cleared (default)
+    # or not (by passing true)
+    def from_backchat_array(messages, save_cache = false)
+      clear unless save_cache
+      humanized_attributes = @base.attributes.keys.inject({}) { |h, attr_name| h.update(attr_name.humanize => attr_name) }
+      
+      # If an error occurs on these keys then add it to the base
+      base_keys = [:channel]
+      
+      messages.each do |message|
+        if message.length == 1 # message only
+          self[:base] << err[0]
+        else #key, message(*)
+          key = message[0].to_sym
+          
+          key = :base if base_keys.include?(key)
+          
+          message[1..-1].each do |value|
+            add(key, value)
+          end
+        end
+      end
+    end
+    
+    # Grabs errors from a json response.
+    def from_backchat_json(json, save_cache = false)
+      array = Array.wrap(ActiveSupport::JSON.decode(json)['errors']) rescue []
+      from_backchat_array array, save_cache
+    end
+  end
+  
+  module Validations
+    # Loads the set of remote errors into the object's Errors based on the
+    # content-type of the error-block received
+    def load_remote_errors(remote_errors, save_cache = false ) #:nodoc:
+      case self.class.format
+      when ActiveResource::Formats[:xml]
+        errors.from_xml(remote_errors.response.body, save_cache)
+      when ActiveResource::Formats[:json]
+        errors.from_json(remote_errors.response.body, save_cache)
+      when ActiveResource::Formats::BackchatJsonFormat
+        errors.from_backchat_json(remote_errors.response.body, save_cache)
+      end
+    end
+  end
+end
+
 module BackchatResource                
   class Base < ReactiveResource::Base
     # include ActiveModel::Dirty
@@ -83,6 +137,7 @@ module BackchatResource
     
     # Add errors from an AR web exception to the base of the model
     def add_errors_from_response_exception(e)
+      return if !e.respond_to?(:response)
       errors = (BackchatResource::Base.format.decode(e.response.body))["errors"]
       if errors.any?
         errors.each do |err|
