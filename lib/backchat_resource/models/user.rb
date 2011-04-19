@@ -224,7 +224,7 @@ module BackchatResource
       def self.send_password_reminder(login)
         payload = { :login => login }
         response = connection.post("#{self.site}#{BackchatResource::CONFIG['api']['forgotten_password_path']}.#{self.format.extension}", payload.to_query)
-        body = JSON.parse(response.body)
+        # body = JSON.parse(response.body)
         # TODO: What does a fail/success raise that we can return?
       end
 
