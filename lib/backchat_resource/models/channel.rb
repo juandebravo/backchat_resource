@@ -88,6 +88,10 @@ module BackchatResource
         @old_uri = uri
         @uri = nil # clear cache
       end
+      
+      def old_uri=(uri)
+        @old_uri = uri
+      end
             
       # def to_s
       #   uri.to_s

@@ -14,11 +14,12 @@ module BackchatResource
 
         # Ensure the URI includes HTTP
         def target=(url)
-          if url.match(/^https?:/)
-            super
-          else
-            super("http://#{url}")
-          end
+          # Set the resources on the URI
+          url = url.match(/^https?:\/\//) ? url : "http://#{url}"
+          url = Addressable::URI.parse(url)
+          self.old_uri = url.to_s # http://something.com/something
+          self.uri.querystring_params["resources[]"] = url.path # /something
+          super url.host # something.com
         end
                   
         def must_be_url

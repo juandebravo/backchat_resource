@@ -24,12 +24,7 @@ module BackchatResource
     def encode(options={})
       send("to_#{self.class.format.extension}", options)
     end
-        
-    # Keep track of BackChat.io API's raised server errors
-    def server_errors
-      @server_errors ||= ActiveModel::Errors.new(self)
-    end
-    
+            
     # Builds a new, unsaved record using the schema.
     def build(attributes = {})
       # attrs = self.format.decode(connection.get("#{new_element_path}").body).merge(attributes)
@@ -70,32 +65,37 @@ module BackchatResource
         self.send("#{key}=", value) if self.respond_to?("#{key}=")
         # END ADD
       end
-      # Add any errors to the model
-      if errors.any?
-        errors.each do |key, value|
-          key = :base if key.blank?
-          self.errors.add(key.to_sym, value)
-          self.server_errors.add(key.to_sym, value)
-        end
-      end   
       self
     end
+        
+    # # https://github.com/rails/rails/blob/master/activemodel/lib/active_model/validations.rb#L176
+    # # Check if a AR model instance is valid.
+    # # In the AR code it clears the errors Hash every time it runs this. This means it would clear any errors
+    # # that have been added from the JSON document. So, this method is overriden to check the JSON doc's errors
+    # # are empty in addition to the AR validators passing.
+    # def valid?(context = nil)
+    #   current_context, self.validation_context = validation_context, context
+    #   errors.clear
+    #   run_validations! && errors.blank?
+    # ensure
+    #   self.validation_context = current_context
+    # end
     
-    # https://github.com/rails/rails/blob/master/activemodel/lib/active_model/validations.rb#L176
-    # Check if a AR model instance is valid.
-    # In the AR code it clears the errors Hash every time it runs this. This means it would clear any errors
-    # that have been added from the JSON document. So, this method is overriden to check the JSON doc's errors
-    # are empty in addition to the AR validators passing.
-    def valid?(context = nil)
-      current_context, self.validation_context = validation_context, context
-      errors.clear
-      # Add the server errors back in
-      server_errors.each do |attribute, errors_array|
-        errors.add(attribute, errors_array) rescue nil
+    # Add errors from an AR web exception to the base of the model
+    def add_errors_from_response_exception(e)
+      errors = (BackchatResource::Base.format.decode(e.response.body))["errors"]
+      if errors.any?
+        errors.each do |err|
+          if err.length == 1 # message only
+            self.errors.add(:base, err[0])
+          else #key, message(*)
+            key = err[0].to_sym
+            err[1..-1].each do |value|
+              self.errors.add(key, value)
+            end
+          end
+        end
       end
-      run_validations! && errors.blank?
-    ensure
-      self.validation_context = current_context
     end
     
     class << self
