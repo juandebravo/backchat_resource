@@ -3,7 +3,7 @@ env.rb
 
 .rspec
 .document
-*.gemspec
+#*.gemspec
 
 # rcov generated
 coverage
