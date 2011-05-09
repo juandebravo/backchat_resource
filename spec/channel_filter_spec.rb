@@ -12,13 +12,13 @@ describe "ChannelFilter" do
   
   it "has a settable BQL string" do
     cf = ChannelFilter.new(:uri => "twitter://backchatio#timeline")
-    cf.bql = 'text has "something in it"'
-    cf.bql.should == 'text has "something in it"'
+    cf.uri.bql = 'text has "something in it"'
+    cf.uri.bql.should == 'text has "something in it"'
   end
 
   it "should return nil if there is no BQL set" do
     cf = ChannelFilter.new(:uri => "twitter://backchatio#timeline")
-    cf.bql.should == nil
+    cf.uri.bql.should == nil
   end
     
   it "can be built from a URI" do
@@ -34,13 +34,13 @@ describe "ChannelFilter" do
   
   it "has a settable BQL attr that sets the bql querystring in the uri attribute" do
     cf = ChannelFilter.build("twitter://backchatio#timeline")
-    cf.bql = 'text has "something"'
+    cf.uri.bql = 'text has "something"'
     cf.uri.to_s.should == "twitter://backchatio/?bql=text%20has%20%22something%22#timeline"
   end
   
   it "shouldn't wipe other querystirng params when setting another" do
     cf = ChannelFilter.build("twitter://backchatio?other=true#timeline")
-    cf.bql = 'text has "something"'
+    cf.uri.bql = 'text has "something"'
     
     keys = cf.uri.querystring_params.keys
     keys.should include "bql"

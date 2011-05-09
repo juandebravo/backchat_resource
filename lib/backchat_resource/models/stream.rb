@@ -16,6 +16,10 @@ module BackchatResource
       
       validates_presence_of :slug, :name
       
+      def before_save
+        @attributes['slug'] = @attributes['name'].to_slug
+      end
+      
       # The ID of a stream for the API URL is it's slug
       # @return [string] stream slug
       def id
@@ -52,11 +56,11 @@ module BackchatResource
       # @param [Array<ChannelFilter>, Array<Hash>] new contents of channel_filters array
       def channel_filters=(val)
         val = [val] unless val.is_a?(Array)
-        cfs = []
+        cfs = [] #val.collect { |cf| cf.is_a?(ChannelFilter) ? cf : ChannelFilter.new(cf)  }
         val.each do |cf|
           if cf.is_a?(ChannelFilter)
             cfs << cf
-          else
+          elsif cf.is_a?(Hash)
             cfs << ChannelFilter.new(cf)
           end
         end
@@ -75,8 +79,8 @@ module BackchatResource
       # @param [string] name of the stream
       # @note This also sets `slug` to a slug-safe version based on name
       def name=(name)
-        @attributes['slug'] = (name || "").to_slug
-        super
+        @attributes['name'] = (name || "")
+        @attributes['slug'] = @attributes['name'].to_slug
       end
       
       # @return [string, nil] The API URL for the stream or nil if there is no slug
@@ -92,7 +96,7 @@ module BackchatResource
         # TODO!
         []
       end
-      
+            
     end
   end
 end

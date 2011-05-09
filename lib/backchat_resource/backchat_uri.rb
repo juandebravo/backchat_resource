@@ -16,7 +16,6 @@ module BackchatResource
       'kind_resource' => nil,
       'params' => HashWithIndifferentAccess.new,
       'target' => nil,
-      'bql' => nil,
       'canonical_uri' => nil,
     }
     @uri_s = nil
@@ -25,20 +24,26 @@ module BackchatResource
       if param.is_a?(String)
         @uri_s = param
         attributes = expand_uri(@uri_s)
-        if attributes && attributes["params"]
-          attributes["params"]["bql"] = CGI.unescape(@expand_uri["params"]["bql"] || "")
-        end
-        
       elsif param.is_a?(Hash)
-        @uri_s = to_canonical_s
-        attributes = param
-        if attributes["params"]
-          attributes["params"]["bql"] = CGI.unescape(@expand_uri["params"]["bql"] || "")
-        end
+        @uri_s = param["uri"] || param["canonical_uri"]
+        attributes = (expand_uri(@uri_s) || {}).merge(param)
       elsif param.is_a?(BackchatUri)
         @uri_s = param.uri_s
         attributes = param.attributes.dup
+        attributes = expand_uri(@uri_s)
       end
+      
+      if attributes["params"]
+        bql = CGI.unescape(attributes["params"]["bql"] || "") if attributes["params"].key?("bql")
+      end
+    end
+    
+    # Make it easy to compare a URI with another URI, excluding the bql strings and shiz like that
+    def id
+      src = attributes["source"]["_id"] rescue ""
+      tgt = attributes["target"] rescue ""
+      knd = attributes["kind"]["_id"] rescue ""
+      "#{src}://#{tgt}##{knd}"
     end
     
     # @return the URI sring being
@@ -57,7 +62,7 @@ module BackchatResource
           'kind_resource' => nil,
           'params' => HashWithIndifferentAccess.new,
           'target' => nil,
-          'bql' => nil,
+          # 'bql' => nil,
           'canonical_uri' => nil,
         }
       end
@@ -121,12 +126,11 @@ module BackchatResource
     end
     
     def bql
-      attributes["params"]["bql"] rescue nil
+      querystring_params["bql"] rescue nil
     end
     
     def bql=(val)
-      attributes["params"] = HashWithIndifferentAccess.new if !attributes["params"]
-      attributes["params"]["bql"] = val
+      querystring_params["bql"] = val
       @uri_s = nil # clear cache
     end
     
@@ -143,9 +147,10 @@ module BackchatResource
     # @example scheme://source/resource#channel/path
     # @return string canonical URI
     def to_canonical_s(escape = false)
-      # escape ? URI.escape(expanded['canonical_uri']) : expanded['canonical_uri']
       recompose_uri
-      attributes['canonical_uri'] || @uri_s
+      uri = attributes['canonical_uri'] || @uri_s
+      escape ? URI.escape(uri) : uri
+      # attributes['canonical_uri'] || @uri_s
     end
     
     def to_s(escape = false)
@@ -171,7 +176,7 @@ module BackchatResource
           'kind_resource' => nil,
           'params' => nil,
           'target' => nil,
-          'bql' => nil,
+          # 'bql' => nil,
           'canonical_uri' => nil,
         }
       else
@@ -201,8 +206,9 @@ module BackchatResource
     
     # Refresh a URI with the API expand URI endpoint, updating the URI @attributes state
     def recompose_uri
-      # puts "*"*100
-      # puts "ATTRIBUTES:: " + attributes.inspect
+      puts "1"*100
+      puts "RECOMPOSING URI"
+      puts "ATTRIBUTES:: " + attributes.inspect
       
       payload = {
         :original_channel => attributes['canonical_uri'] || @uri_s,
@@ -218,6 +224,11 @@ module BackchatResource
           payload[k.to_sym] = v
         end
       end
+      if querystring_params.any?
+        puts "*"*100
+        puts payload.inspect 
+      end
+      
       # Set source
       if attributes['source'].is_a?(Hash)
         payload[:source] = attributes['source']['_id']
@@ -249,8 +260,11 @@ module BackchatResource
           @attributes = data
         end
         
-        # puts @attributes.inspect
+        puts @attributes.inspect
         
+        puts "2"*100
+        
+        @attributes
       # rescue
       #   puts ("Could not recompose URI for #{payload.to_json}")
       # end

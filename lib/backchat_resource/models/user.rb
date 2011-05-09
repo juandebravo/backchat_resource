@@ -151,24 +151,26 @@ module BackchatResource
       end
       
       def find_channel_for_uri(uri)
+        return nil if uri.nil?
+        
         uri = BackchatUri.parse(uri) if uri.is_a?(String)
         uri_s = uri.to_s
+        
         self.channels.each do |ch|
-          puts '*'*100
-          puts ch.uri.attributes.inspect
-          puts uri.attributes.inspect
-          puts ch.uri.attributes["source"]["_id"] + " == " + uri.attributes["source"]["_id"]
-          puts ch.uri.attributes["kind"]["_id"] + " == " + uri.attributes["kind"]["_id"]
-          puts ch.uri.attributes["target"] + " == " + uri.attributes["target"]
-          puts '^'*100
-          # puts "Comparing #{uri.source.id}, #{uri.kind.id}, #{uri.target}"
-          if ch.uri.attributes["source"]["_id"] == uri.attributes["source"]["_id"] && 
-             ch.uri.attributes["kind"]["_id"] == uri.attributes["kind"]["_id"] && 
-             ch.uri.attributes["target"] == uri.attributes["target"]
-           puts "MATCHED #{ch.uri.inspect}"
-            return ch if ch.uri.to_s == uri_s
+          if ch.uri && ch.uri.id == uri.id
+          # if ch.uri.attributes["source"]["_id"] == uri.attributes["source"]["_id"] && 
+          #    ch.uri.attributes["kind"]["_id"] == uri.attributes["kind"]["_id"] && 
+          #    ch.uri.attributes["target"] == uri.attributes["target"]
+             # puts "#{ch.uri.attributes["source"]["_id"]} == #{uri.attributes["source"]["_id"]}"
+             # puts "#{ch.uri.attributes["kind"]["_id"]} == #{uri.attributes["kind"]["_id"]} && "
+             # puts "#{ch.uri.attributes["target"]} == #{uri.attributes["target"]}"
+
+            # puts "MATCHED #{ch.uri.inspect} == #{uri_s}"
+            # puts "FOUND IT MOTHER FUCKERS! #{ch.inspect}"
+            return ch #if ch.uri.to_s == uri_s
           end
         end
+        # puts "NO MATCH FOUND! #{uri_s}"
         nil
       end
       
