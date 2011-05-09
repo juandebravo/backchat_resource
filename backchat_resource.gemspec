@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Adam Burmister"]
-  s.date = %q{2011-04-29}
+  s.date = %q{2011-05-09}
   s.description = %q{An ActiveRecord wrapper around the BackChat.io RESTful API}
   s.email = %q{adam.burmister@gmail.com}
   s.extra_rdoc_files = [
@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
     "LICENSE.txt",
     "README.markdown",
     "Rakefile",
+    "backchat_resource.gemspec",
     "examples/smsowl.rb",
     "lib/backchat_resource.rb",
     "lib/backchat_resource/addressable.rb",

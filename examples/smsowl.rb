@@ -16,11 +16,11 @@ new_user_o2_mobile_phone_number = "075678987657"
 # Open the connection to the BackChat.io API
 bc_smsowl = User.authenticate("smsowlusername","smsowlpassword")
 hashblue_ch = Channel.new :uri => "hashblue://#{new_user_o2_mobile_phone_number}"
+bc_smsowl.channels.add hashblue_ch
 
 owl_stream = Stream.new :name => "SMSOwl.com #{new_user_o2_mobile_phone_number} to #{new_user_twitter_name}"
-owl_stream.channel_filters.new hashblue_ch
+owl_stream.channel_filters.new :channel => hashblue_ch, :bql => 'text has "#owl"'
 
-bc_smsowl.channels.add hashblue_ch
-bc_smsowl.streams.add 
+bc_smsowl.streams << owl_stream
 
 bc_smsowl.save

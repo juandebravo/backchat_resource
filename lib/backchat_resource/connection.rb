@@ -14,7 +14,7 @@ module ActiveResource
     @@cache = Cache.new :expiration => ShortCacheTimeout
     
     private
-    
+
       alias_method :old_request, :request
       # Makes a request to the remote service.
       def request(method, path, *arguments)
