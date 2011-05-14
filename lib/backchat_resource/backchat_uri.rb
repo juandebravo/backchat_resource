@@ -158,11 +158,22 @@ module BackchatResource
       @uri_s ||= to_canonical_s(escape)
     end
     
-    # Parse a URI string into a BackchatUri
-    # Attributes are downcased later on in the life cycle. See DOWNCASED_ATTRIBUTES
-    # @params String uri_s
-    def self.parse(uri_s)
-      new uri_s
+    class << self
+      # Parse a URI string into a BackchatUri
+      # Attributes are downcased later on in the life cycle. See DOWNCASED_ATTRIBUTES
+      # @params String uri_s
+      def parse(uri_s)
+        new uri_s
+      end
+
+      def __cache__
+        @cache ||= Cache.new(:max_num => 30000, :expiration => 20.minutes)
+      end
+
+      alias :old_new :new
+      def new(uri_s)
+        __cache__[uri_s] ||= old_new(uri_s)
+      end
     end
     
     # @return [Hash] expanded URI data
