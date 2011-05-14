@@ -158,19 +158,11 @@ module BackchatResource
         
         self.channels.each do |ch|
           if ch.uri && ch.uri.id == uri.id
-          # if ch.uri.attributes["source"]["_id"] == uri.attributes["source"]["_id"] && 
-          #    ch.uri.attributes["kind"]["_id"] == uri.attributes["kind"]["_id"] && 
-          #    ch.uri.attributes["target"] == uri.attributes["target"]
-             # puts "#{ch.uri.attributes["source"]["_id"]} == #{uri.attributes["source"]["_id"]}"
-             # puts "#{ch.uri.attributes["kind"]["_id"]} == #{uri.attributes["kind"]["_id"]} && "
-             # puts "#{ch.uri.attributes["target"]} == #{uri.attributes["target"]}"
-
-            # puts "MATCHED #{ch.uri.inspect} == #{uri_s}"
-            # puts "FOUND IT MOTHER FUCKERS! #{ch.inspect}"
             return ch #if ch.uri.to_s == uri_s
           end
         end
-        # puts "NO MATCH FOUND! #{uri_s}"
+        
+        # No match found
         nil
       end
       
@@ -189,7 +181,7 @@ module BackchatResource
       
       # Ask the API to change the billing plan for the current user
       def change_billing_plan!(new_plan)
-        
+        # TODO!
       end
       
       # Authenticate a user and set the API key on BackchatResource::Base to the authenticated user

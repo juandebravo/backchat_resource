@@ -23,14 +23,15 @@ module BackchatResource
     def initialize(param={})
       if param.is_a?(String)
         @uri_s = param
-        attributes = expand_uri(@uri_s)
+        @attributes = expand_uri(@uri_s)
       elsif param.is_a?(Hash)
-        @uri_s = param["uri"] || param["canonical_uri"]
-        attributes = (expand_uri(@uri_s) || {}).merge(param)
+        param["canonical_uri"] = param["uri"] if !param["canonical_uri"] && param["uri"]
+        @uri_s = param["canonical_uri"]
+        @attributes = param.merge(expand_uri(@uri_s))
       elsif param.is_a?(BackchatUri)
         @uri_s = param.uri_s
-        attributes = param.attributes.dup
-        attributes = expand_uri(@uri_s)
+        #attributes = param.attributes.dup
+        @attributes = expand_uri(@uri_s)
       end
       
       if attributes["params"]
@@ -206,9 +207,9 @@ module BackchatResource
     
     # Refresh a URI with the API expand URI endpoint, updating the URI @attributes state
     def recompose_uri
-      puts "1"*100
-      puts "RECOMPOSING URI"
-      puts "ATTRIBUTES:: " + attributes.inspect
+      # puts "1"*100
+      # puts "RECOMPOSING URI"
+      # puts "ATTRIBUTES:: " + attributes.inspect
       
       payload = {
         :original_channel => attributes['canonical_uri'] || @uri_s,
@@ -225,8 +226,8 @@ module BackchatResource
         end
       end
       if querystring_params.any?
-        puts "*"*100
-        puts payload.inspect 
+        # puts "*"*100
+        # puts payload.inspect 
       end
       
       # Set source
@@ -260,9 +261,9 @@ module BackchatResource
           @attributes = data
         end
         
-        puts @attributes.inspect
+        # puts @attributes.inspect
         
-        puts "2"*100
+        # puts "2"*100
         
         @attributes
       # rescue

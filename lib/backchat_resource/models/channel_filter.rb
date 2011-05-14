@@ -16,9 +16,11 @@ module BackchatResource
         super
         params = params.first if params.is_a?(Array)
         if params.is_a?(Hash)
-          self.uri = params["uri"] if params.key?("uri")
-          self.uri.bql = params["bql"] if params.key?("bql")
           self.enabled = params["enabled"] if params.key?("enabled")
+          
+          self.uri = params["uri"] || params["canonical_uri"]
+          @uri = BackchatUri.parse(@attributes["uri"])
+          @uri.bql = params["bql"] if params.key?("bql")
         elsif params.is_a?(String)
           self.uri = params
         elsif params.is_a?(Channel)

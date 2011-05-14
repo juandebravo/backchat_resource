@@ -43,8 +43,6 @@ require 'backchat_resource/base'
 require 'backchat_resource/models'
 include BackchatResource
 
-# Dir["#{BackchatResource::Root}/backchat_resource/*.rb"].each {|file| require file }
-
 # Enable debugging output if configured
 if BackchatResource::CONFIG["api"]["debug"]
   class ActiveResource::Connection

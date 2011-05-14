@@ -54,8 +54,6 @@ end
 
 module BackchatResource                
   class Base < ReactiveResource::Base
-    # include ActiveModel::Dirty
-    
     self.site   = BackchatResource::CONFIG["api"]["host"]
     self.format = :backchat_json
     self.timeout = BackchatResource::CONFIG["api"]["timeout"] || 5
@@ -72,16 +70,12 @@ module BackchatResource
       @is_new_record = val
     end
     
-    # def encode(options={})
-    #   self.class.format.encode(attributes, options)
-    # end
     def encode(options={})
       send("to_#{self.class.format.extension}", options)
     end
             
     # Builds a new, unsaved record using the schema.
     def build(attributes = {})
-      # attrs = self.format.decode(connection.get("#{new_element_path}").body).merge(attributes)
       attrs = self.schema
       raise attrs.inspect
       self.new(attrs)
@@ -121,19 +115,6 @@ module BackchatResource
       end
       self
     end
-        
-    # # https://github.com/rails/rails/blob/master/activemodel/lib/active_model/validations.rb#L176
-    # # Check if a AR model instance is valid.
-    # # In the AR code it clears the errors Hash every time it runs this. This means it would clear any errors
-    # # that have been added from the JSON document. So, this method is overriden to check the JSON doc's errors
-    # # are empty in addition to the AR validators passing.
-    # def valid?(context = nil)
-    #   current_context, self.validation_context = validation_context, context
-    #   errors.clear
-    #   run_validations! && errors.blank?
-    # ensure
-    #   self.validation_context = current_context
-    # end
     
     # Add errors from an AR web exception to the base of the model
     def add_errors_from_response_exception(e)
