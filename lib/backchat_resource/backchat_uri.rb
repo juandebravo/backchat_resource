@@ -25,7 +25,7 @@ module BackchatResource
         @uri_s = param
         @attributes = expand_uri(@uri_s)
       elsif param.is_a?(Hash)
-        param["canonical_uri"] = param["uri"] if !param["canonical_uri"] && param["uri"]
+        param["canonical_uri"] ||= param["uri"]
         @uri_s = param["canonical_uri"]
         @attributes = param.merge(expand_uri(@uri_s))
       elsif param.is_a?(BackchatUri)

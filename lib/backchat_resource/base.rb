@@ -122,14 +122,14 @@ module BackchatResource
       errors = (BackchatResource::Base.format.decode(e.response.body))["errors"]
       if errors.any?
         errors.each do |err|
-          if err.length == 1 # message only
-            self.errors.add(:base, err[0])
-          else #key, message(*)
+          # if err.length == 1 # message only
+          #   self.errors.add(:base, err[0])
+          # else #key, message(*)
             key = err[0].to_sym
             err[1..-1].each do |value|
               self.errors.add(key, value)
             end
-          end
+          # end
         end
       end
     end

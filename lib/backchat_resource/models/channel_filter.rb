@@ -14,10 +14,9 @@ module BackchatResource
       # Set default values
       def initialize(*params)
         super
-        params = params.first if params.is_a?(Array)
+        params = HashWithIndifferentAccess.new(params.is_a?(Array) ? params.first : params)
         if params.is_a?(Hash)
-          self.enabled = params["enabled"] if params.key?("enabled")
-          
+          self.enabled = params["enabled"] if params.key?("enabled")          
           self.uri = params["uri"] || params["canonical_uri"]
           @uri = BackchatUri.parse(@attributes["uri"])
           @uri.bql = params["bql"] if params.key?("bql")
@@ -37,7 +36,7 @@ module BackchatResource
       end
       
       def enabled
-        @attributes["enabled"] == "1" || @attributes["enabled"] == "true" || @attributes["enabled"] == true || false
+        (@attributes["enabled"] == "1" || @attributes["enabled"] == "true" || @attributes["enabled"] == true) || false
       end
       alias_method :enabled?, :enabled
       
@@ -58,34 +57,15 @@ module BackchatResource
         @uri ||= begin
           BackchatUri.parse(@attributes["uri"] || @attributes["canonical_uri"])
         rescue => e
-          puts "**** ChannelFilter.uri ERROR PARSING URI '#{@attributes.inspect}'"
-          puts e.inspect
-          puts caller.inspect
-          # puts "*"*100
-          # puts e.inspect
-          # BackchatUri.new
-          nil
+          # TODO: Log parsing error
+          BackchatUri.new
         end
       end
       
       # The URI describes the channel filter
       # @param {String|BackchatUri} URI for the channel filter
       def uri=(uri)
-        # puts "I JUST SET THE URI= #{uri.inspect}"
-        # puts caller.first.inspect
         @attributes["uri"] = uri.to_s
-        
-        # begin
-        #   # bc_uri = BackchatUri.parse(@attributes["uri"])
-        #   # bql = bc_uri.bql
-        # rescue
-        #   puts "**** ChannelFilter.uri= ERROR PARSING URI '#{@attributes.inspect}'"
-        #   puts e.inspect
-        #   puts caller.inspect
-        #   # puts "*"*100
-        #   # puts e.inspect
-        #   # BackchatUri.new
-        # end
         @uri = @canonical_uri = nil # clear cache
       end
       
@@ -96,10 +76,6 @@ module BackchatResource
       # @param [string] BQL query to filter against the Channel
       def bql=(val)
         self.uri.bql = val
-        # @attributes["uri"] = uri.to_s
-        # puts "I JUST SET THE URI BQL PARAM: #{self.uri.bql}, #{self.uri.to_s}"
-        # @attributes["bql"] = val
-        # @uri = nil
       end
       
       # Build a new instance of a ChannelFilter based on the input BackChat.io URI, or Hash
