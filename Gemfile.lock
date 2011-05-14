@@ -1,23 +1,23 @@
 GIT
   remote: git://github.com/justinweiss/reactive_resource.git
-  revision: 738b10bf370cbd2e9a6fb3d80c54b62b60d7a3f8
+  revision: 8160cd1d79aa4b12961cb4fad60a68cb5c77c90c
   specs:
-    reactive_resource (0.5.1)
+    reactive_resource (0.6.1)
       activeresource (>= 2.3.10)
 
 GEM
   remote: http://rubygems.org/
   specs:
     ZenTest (4.5.0)
-    activemodel (3.0.5)
-      activesupport (= 3.0.5)
+    activemodel (3.0.7)
+      activesupport (= 3.0.7)
       builder (~> 2.1.2)
-      i18n (~> 0.4)
-    activeresource (3.0.5)
-      activemodel (= 3.0.5)
-      activesupport (= 3.0.5)
-    activesupport (3.0.5)
-    addressable (2.2.4)
+      i18n (~> 0.5.0)
+    activeresource (3.0.7)
+      activemodel (= 3.0.7)
+      activesupport (= 3.0.7)
+    activesupport (3.0.7)
+    addressable (2.2.5)
     autotest (4.4.6)
       ZenTest (>= 4.4.1)
     autotest-fsevent (0.2.5)
@@ -49,7 +49,7 @@ GEM
     rspec-mocks (2.3.0)
     sys-uname (0.8.5)
     unidecode (1.0.0)
-    yard (0.6.5)
+    yard (0.6.8)
 
 PLATFORMS
   ruby
