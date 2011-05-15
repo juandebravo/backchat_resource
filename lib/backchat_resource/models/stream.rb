@@ -39,7 +39,7 @@ module BackchatResource
           "description" => description,
           "channel_filters" => (channel_filters.is_a?(Array) ? channel_filters : [channel_filters]).inject([]) { |col, cf|
             col << {
-              "channel" => cf.uri.to_s(false),
+              "channel" => cf.channel.to_s(false),
               "enabled" => cf.enabled?
             }
           }
