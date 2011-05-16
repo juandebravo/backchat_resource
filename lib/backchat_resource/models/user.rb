@@ -183,69 +183,95 @@ module BackchatResource
       def change_billing_plan!(new_plan)
         # TODO!
       end
+
+      class << self
       
-      # Authenticate a user and set the API key on BackchatResource::Base to the authenticated user
-      # @param [string] username
-      # @param [string] password
-      # @return {User|nil} The User model belonging to the passed in credentials or nil if none was found
-      def self.authenticate(username, password=nil)
-        begin
-          if password.nil?
-            # Assume username is API_KEY
-            BackchatResource::Base.api_key = username
-            find
-          else
-            payload = {
-              :username => username,
-              :password => password
-            }
-            response = connection.post(self.login_path, payload.to_json)
-            body = JSON.parse(response.body)
-            if body["data"]["api_key"]
-              BackchatResource::Base.api_key = body["data"]["api_key"]
-              new(body)
+        # Authenticate a user and set the API key on BackchatResource::Base to the authenticated user
+        # @param [string] username
+        # @param [string] password
+        # @return {User|nil} The User model belonging to the passed in credentials or nil if none was found
+        def authenticate(username, password=nil)
+          begin
+            if password.nil?
+              # Assume username is API_KEY
+              BackchatResource::Base.api_key = username
+              find
             else
-              nil # warden expects a failure to return nil
+              payload = {
+                :username => username,
+                :password => password
+              }
+              response = connection.post(self.login_path, payload.to_json)
+              body = JSON.parse(response.body)
+              if body["data"]["api_key"]
+                BackchatResource::Base.api_key = body["data"]["api_key"]
+                new(body)
+              else
+                nil # warden expects a failure to return nil
+              end
             end
+          rescue ActiveResource::UnauthorizedAccess
+            nil
           end
-        rescue ActiveResource::UnauthorizedAccess
-          nil
+        end
+        
+        # Send a password reminder to the user
+        # @param [string] login
+        def send_password_reminder(login)
+          payload = { :login => login }
+          read_response connection.post(make_uri('forgotten_password_path'), payload.to_query)
+          # body = JSON.parse(response.body)
+          # TODO: What does a fail/success raise that we can return?
+        end
+
+        def create(params)
+          begin
+            read_response connection.post(make_uri("signup_path"), params.to_json)
+          rescue ActiveResource::ResourceConflict, ActiveResource::ResourceInvalid => e
+            read_error(params, e)
+          end
+        end
+
+        def read_response(response)
+          body = JSON.parse(response.body).with_indifferent_access
+          new(body)
+        end
+
+        def read_error(params, ex)
+          u = User.new(params)
+          u.add_errors_from_response_exception(ex)
+          u
+        end
+
+        def make_uri(key)
+          "#{self.site}#{BackchatResource::CONFIG['api'][key]}.#{self.format.extension}"
+        end
+
+        # #
+        # # On user.save we need to 
+        # # - save the Streams objects to a different end point
+        # # - upgrade the Plan if it's changed
+        # # 
+        # def create
+        #   # TODO
+        #   super
+        # end
+        # def update
+        #   # TODO
+        #   super
+        # end
+        
+        # Override the element path to match the BackChat.io API structure - the root is the user element
+        # https://api.backchat.io/{API_VERS}/
+        def element_path(id=nil, prefix_options = {}, query_options = nil)
+          "#{self.site}#{BackchatResource::CONFIG['api']['user_path']}index.#{self.format.extension}"
+        end
+        
+        def login_path
+          "#{self.site}#{BackchatResource::CONFIG['api']['login_path']}.#{self.format.extension}"
         end
       end
-      
-      # Send a password reminder to the user
-      # @param [string] login
-      def self.send_password_reminder(login)
-        payload = { :login => login }
-        response = connection.post("#{self.site}#{BackchatResource::CONFIG['api']['forgotten_password_path']}.#{self.format.extension}", payload.to_query)
-        # body = JSON.parse(response.body)
-        # TODO: What does a fail/success raise that we can return?
-      end
-
-      # #
-      # # On user.save we need to 
-      # # - save the Streams objects to a different end point
-      # # - upgrade the Plan if it's changed
-      # # 
-      # def create
-      #   # TODO
-      #   super
-      # end
-      # def update
-      #   # TODO
-      #   super
-      # end
-      
-      # Override the element path to match the BackChat.io API structure - the root is the user element
-      # https://api.backchat.io/{API_VERS}/
-      def self.element_path(id=nil, prefix_options = {}, query_options = nil)
-        "#{self.site}#{BackchatResource::CONFIG['api']['user_path']}index.#{self.format.extension}"
-      end
-      
-      def self.login_path
-        "#{self.site}#{BackchatResource::CONFIG['api']['login_path']}.#{self.format.extension}"
-      end
-      
+        
     end
   end
 end

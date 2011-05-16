@@ -91,7 +91,7 @@ module BackchatResource
       errors = attributes.key?(:errors) ? attributes[:errors] : []
       data   = attributes.key?(:data)   ? attributes[:data]   : attributes
       # Load the data attributes hash into the model
-      data.each do |key, value|
+      (data||{}).each do |key, value|
         @attributes[key.to_s] =
           case value
             when Array

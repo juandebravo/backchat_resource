@@ -172,7 +172,7 @@ module BackchatResource
 
       alias :old_new :new
       def new(uri_s)
-        __cache__[uri_s] ||= old_new(uri_s)
+        uri_s.blank? ? old_new(uri_s) : __cache__[uri_s] ||= old_new(uri_s)
       end
     end
     

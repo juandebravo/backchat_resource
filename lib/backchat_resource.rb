@@ -15,6 +15,18 @@ require 'reactive_resource'
 
 # Load the configuration YML for use within the library classes
 module BackchatResource
+
+
+  ####
+  # This is insane it has no purpose whatsoever apart from making things more difficult
+  # 
+  # The yaml file needs to be included in the Gem and the path is not configurable (the solution would still be ugly though)
+  # All it really seems to change is the base uri of the library so I'd rather set that as property instead of having to do 
+  # all this dancing around just to add a dumb string.
+  #
+  # Please remove (IPC)
+  ####
+
   Root = File.dirname(__FILE__)
   $:.unshift Root
   

@@ -11,6 +11,7 @@ defaults: &defaults
     message_source_path: "source/"
     user_path: ""
     login_path: "login"
+    signup_path: "signup"
     change_password_path: "change_password"
     forgotten_password_path: "forgot"
     plans_path: "plans/"

@@ -17,7 +17,7 @@ module ActiveResource
       end
       
       def decode(json)
-        ActiveSupport::JSON.decode(json)
+        ActiveSupport::JSON.decode(json).with_indifferent_access
       end
       
     end
