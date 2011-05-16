@@ -11,8 +11,15 @@ module BackchatResource
         end
 
         validate :must_be_url
+        def must_be_url
+          begin
+            Addressable::URI.parse(self.target)
+          rescue
+            errors.add("target", "isn't valid")
+          end
+        end
         
-        def display_target
+        def target
           self.uri.to_s
         end
 
@@ -29,15 +36,7 @@ module BackchatResource
           # Set the target to be the domain
           super url.host # something.com
         end
-                  
-        def must_be_url
-          begin
-            Addressable::URI.parse(self.target)
-          rescue
-            errors.add("target", "isn't valid")
-          end
-        end
-
+      
       end
     end
   end
