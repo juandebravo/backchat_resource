@@ -26,13 +26,23 @@ module BackchatResource
       def api_url
         "#{self.class.site}#{BackchatResource::CONFIG['api']['plans_path']}#{id}.#{self.class.format.extension}"
       end
-      
-      # @return [Plan] get a Plan instance populated with the contents of an API Plan URL
-      def self.get_from_url(uri)
-        response = connection.get(uri)
-        new(response)
+
+      class << self
+
+        def __cache__
+          @@__plan_cache__ ||= Cache.new(:max_num => 10)
+        end
+        
+        # @return [Plan] get a Plan instance populated with the contents of an API Plan URL
+        def get_from_url(uri)
+          unless __cache__[uri]
+            response = connection.get(uri)
+            __cache__[uri] = new(response)
+          end
+          __cache__[uri]
+        end
       end
-      
+
       def to_json
         uri
       end

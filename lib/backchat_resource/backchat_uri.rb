@@ -170,14 +170,14 @@ module BackchatResource
         @cache ||= Cache.new(:max_num => 30000, :expiration => 20.minutes)
       end
 
-      alias :old_new :new
-      def new(uri_s)
-        unless uri_s.blank?
-          __cache__[uri_s] ||= old_new(uri_s)
-        else
-          old_new(uri_s)
-        end
-      end
+      #alias :old_new :new
+      #def new(uri_s)
+        #unless uri_s.blank?
+          #__cache__[uri_s] ||= old_new(uri_s)
+        #else
+          #old_new(uri_s)
+        #end
+      #end
     end
     
     # @return [Hash] expanded URI data
@@ -197,13 +197,20 @@ module BackchatResource
         }
       else
         # begin
+        #
+        if self.class.__cache__.cached?(uri_s)
+          self.class.__cache__[uri_s]
+        else
           response = BackchatResource::Base.connection.get(expand_uri_uri(uri_s), BackchatResource::Base.headers)
           data = response['data'].first
-          if data.is_a?(Array)
-            return data.last # ["key",{data}]
+          res = if data.is_a?(Array)
+            data.last # ["key",{data}]
           else
-            return data
+            data
           end
+          self.class.__cache__[uri_s] = res
+          res
+        end
         # rescue
         #   puts "Error expanding URI #{uri_s}"
         #   attributes ||= HashWithIndifferentAccess.new
