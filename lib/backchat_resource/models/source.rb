@@ -63,6 +63,12 @@ module BackchatResource
         nil
       end
       
+      class << self
+        def __uri_cache__ 
+          @__uri_cache__ ||= Cache.new(:max_num => 30000, :expiration => 20.minutes)
+        end
+      end
+
       # Find a `Source` that would match the passed `URI`
       # @param [string, BackchatUri]
       def self.find_for_uri(uri)
@@ -77,8 +83,12 @@ module BackchatResource
         raise "Can't find a source for #{uri}" if scheme.blank?
 
         begin
-          response = BackchatResource::Base.connection.get("#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['expand_source_path']}#{scheme}", BackchatResource::Base.headers)
-          Source.new(response['data'])
+          if __uri_cache__.cached?(uri)
+            __uri_cache__[uri]
+          else
+            response = BackchatResource::Base.connection.get("#{BackchatResource::Base.site}#{BackchatResource::CONFIG['api']['expand_source_path']}#{scheme}", BackchatResource::Base.headers)
+            __uri_cache__[uri] = Source.new(response['data'])
+          end
         rescue
           nil
         end

@@ -18,6 +18,9 @@ module ActiveResource
       alias_method :old_request, :request
       # Makes a request to the remote service.
       def request(method, path, *arguments)
+        #puts "#" * 100
+        #puts "caller: #{caller.join("\n")}"
+        #puts "#" * 100
         if (BackchatResource::CONFIG["api"]["cache"] || false)
           cache_key = cache_key(method, path, *arguments)
           
@@ -32,9 +35,9 @@ module ActiveResource
             else
               # It's not yet cached
               response = old_request(method, path, *arguments)
-              case response.code.to_i
-                when 200...400
-                  @@cache[cache_key] = response
+              cod = response.code.to_i
+              if (cod >= 200 && code < 300) and not response.body.blank?
+                @@cache[cache_key] = response
               end
               return response
             end
