@@ -77,7 +77,6 @@ module BackchatResource
     # Builds a new, unsaved record using the schema.
     def build(attributes = {})
       attrs = self.schema
-      raise attrs.inspect
       self.new(attrs)
     end
         
