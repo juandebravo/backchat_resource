@@ -142,7 +142,7 @@ module BackchatResource
         channel_uri = ch.uri.to_s
         streams.each do |strm| 
           strm.channel_filters.each do |cf|
-            if cf.uri.to_s == channel_uri
+            if cf.channel.to_s == channel_uri
               results << cf
             end
           end
@@ -219,7 +219,7 @@ module BackchatResource
         # @param [string] login
         def send_password_reminder(login)
           payload = { :login => login }
-          read_response connection.post(make_uri('forgotten_password_path'), payload.to_query)
+          read_response connection.post(make_uri('forgotten_password_path'), payload.to_json)
           # body = JSON.parse(response.body)
           # TODO: What does a fail/success raise that we can return?
         end
@@ -233,8 +233,12 @@ module BackchatResource
         end
 
         def read_response(response)
-          body = JSON.parse(response.body).with_indifferent_access
-          new(body)
+          begin
+            body = JSON.parse(response.body).with_indifferent_access
+            new(body)
+          rescue
+            nil
+          end
         end
 
         def read_error(params, ex)
