@@ -58,10 +58,11 @@ include BackchatResource
 # Enable debugging output if configured
 if BackchatResource::CONFIG["api"]["debug"]
   class ActiveResource::Connection
-   def http
-     http = Net::HTTP.new(@site.host, @site.port)
-     http.set_debug_output $stderr
-     return http
-   end
+    alias_method :old_http, :http
+    def http
+      c = old_http
+      c.set_debug_output $stderr
+      return c
+    end
   end
 end
